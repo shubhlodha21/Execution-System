@@ -5,8 +5,8 @@ Live FX monitor in the terminal: quote table + cross-rate matrix, refreshed ever
     python -m execsys.tools.fx_monitor --pairs EUR/USD GBP/USD USD/JPY
     python -m execsys.tools.fx_monitor --port 7497                  # TWS paper instead of Gateway
 
-Runs its own data-only node with the configured IB client_id (21 by default). IB allows one connection
-per client_id, so while the trading app is running pass another one, e.g. --client-id 22.
+Runs its own data-only node on IB client_id 99 by default (override with --client-id), so it never
+clashes with the trading app's client_id (21).
 IB quotes CHF as USD/CHF; CHF->USD appears in the matrix.
 Printing from the timer is intentional: this is a viewing tool, not part of the trading path.
 """
@@ -32,6 +32,7 @@ from execsys.tools.fx_matrix import render
 
 IB_CLIENT = ClientId.from_str("IB")
 DEFAULT_PAIRS = ["EUR/USD", "USD/CHF", "USD/JPY"]
+DEFAULT_CLIENT_ID = 99
 _CLEAR = "\x1b[H\x1b[2J"
 
 
@@ -97,7 +98,7 @@ def main() -> None:
     parser.add_argument("--pairs", nargs="+", default=DEFAULT_PAIRS, help="e.g. EUR/USD USDJPY GBP/USD")
     parser.add_argument("--config", default="config/settings.yaml")
     parser.add_argument("--port", type=int, help="override ib.port (7497 TWS paper, 4002 Gateway paper)")
-    parser.add_argument("--client-id", type=int, help="IB client_id for this tool (default: ib.client_id, 21); use another while the trading app runs")
+    parser.add_argument("--client-id", type=int, help=f"IB client_id for this tool (default {DEFAULT_CLIENT_ID})")
     parser.add_argument("--refresh", type=float, default=1.0, help="seconds between screen refreshes")
     args = parser.parse_args()
 
@@ -105,7 +106,7 @@ def main() -> None:
     pairs = [normalize_pair(p) for p in args.pairs]
     ib = settings.ib.model_copy(
         update={
-            "client_id": args.client_id or settings.ib.client_id,
+            "client_id": args.client_id or DEFAULT_CLIENT_ID,
             **({"port": args.port} if args.port else {}),
         },
     )

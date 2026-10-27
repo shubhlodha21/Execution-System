@@ -133,9 +133,9 @@ are configured in `execsys/app.py` and described in `Diagrams/System_V2_Architec
   matrix (1 row currency = X column currency, from mids; inverse and one-hop crosses computed), refreshed every
   `--refresh` seconds.
 - **One connection:** all pairs share a single IB client_id / socket.
-- **Runs separately** from the trading app: its own data-only node on the configured client_id (21 by default),
-  loading only the requested pairs (`build_node(..., instruments=)`). IB allows one connection per client_id, so
-  while the trading app is running start it with `--client-id 22` (otherwise IB error 326).
+- **Runs separately** from the trading app: its own data-only node on client_id **99** by default (`--client-id`
+  to change), loading only the requested pairs (`build_node(..., instruments=)`). It never clashes with the
+  trading app's client_id 21, so both can run at once.
 - **Pairs:** IB IDEALPRO symbols (`EUR/USD`, `USD/CHF`, `USD/JPY`; `EURUSD` also accepted). IB quotes CHF as
   `USD/CHF`; CHF→USD is shown in the matrix.
 - **Pure parts** (`fx_matrix.py`: `cross_matrix`, `render`) are unit-tested; the tool prints from its timer by design.

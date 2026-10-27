@@ -62,8 +62,8 @@ python -m execsys.tools.fx_monitor                                  # EUR/USD, U
 python -m execsys.tools.fx_monitor --pairs EUR/USD GBP/USD USD/JPY
 ```
 
-Shows a live quote table and a cross-rate matrix, refreshed every second; Ctrl+C to quit. It uses client_id 21
-by default, the same as the trading app; to run both at once, start the monitor with `--client-id 22`. FX quotes only flow while the FX market is open
+Shows a live quote table and a cross-rate matrix, refreshed every second; Ctrl+C to quit. It uses client_id 99
+by default (`--client-id` to change), so it can run alongside the trading app (client_id 21). FX quotes only flow while the FX market is open
 (Sunday ~17:00 to Friday ~17:00 New York time).
 
 ## 8. Tests
