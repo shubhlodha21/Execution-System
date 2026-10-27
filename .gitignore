@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+.env
+logs/
+runtime/
+data/
+*.egg-info/
+# Local design files, not published (repo is public)
+Diagrams/

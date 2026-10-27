@@ -1,0 +1,21 @@
+[project]
+name = "execsys"
+version = "0.1.0"
+description = "Multi-strategy IBKR execution system on NautilusTrader v2 with OpenTelemetry"
+requires-python = ">=3.12"
+dependencies = [
+    "nautilus_trader==2.0.0rc7",
+    "pydantic>=2.7",
+    "pyyaml>=6.0",
+    "opentelemetry-sdk>=1.40",
+    "opentelemetry-exporter-otlp-proto-grpc>=1.40",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.setuptools.packages.find]
+include = ["execsys*"]

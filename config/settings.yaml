@@ -1,0 +1,87 @@
+# Execution system configuration.
+# Secrets are NOT stored here. Set them as environment variables (see .env.example):
+#   IB_ACCOUNT_ID, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+# Adding a strategy or ticker = editing this file only.
+
+node:
+  name: EXECSYS
+  trader_id: TRADER-001
+  reconciliation: true
+  reconciliation_lookback_mins: 1440
+  log_dir: logs
+  log_level: INFO
+
+ib:
+  host: 127.0.0.1
+  port: 4002              # IB Gateway paper (live = 4001)
+  client_id: 21           # one client_id per node, shared by data + execution
+  market_data_type: realtime   # use delayed-frozen if the paper account has no data subscriptions
+
+risk_engine:              # Nautilus pre-trade checks (every order)
+  max_order_submit_rate: "40/00:00:01"
+  max_order_modify_rate: "40/00:00:01"
+  max_notional_per_order:
+    AAPL.XNAS: "50000"
+    MSFT.XNAS: "50000"
+    TSLA.XNAS: "50000"
+
+risk_limits:              # Risk Monitor (account level)
+  max_daily_loss: "1000"
+  default_max_position: "100"
+  max_position_per_instrument:
+    TSLA.XNAS: "50"
+  max_gross_exposure: "250000"
+  stale_data_secs: 120
+  max_rejects_per_window: 5
+  reject_window_secs: 60
+  flatten_on_halt: false
+  check_interval_ms: 1000
+
+order_manager:
+  strategy_id: ORDER-MANAGER   # registered as ORDER-MANAGER-001
+  order_id_tag: "001"
+  order_type: MARKET      # MARKET or LIMIT (marketable limit at touch +/- offset)
+  limit_offset_ticks: 1
+  signal_stale_secs: 300
+  min_order_interval_ms: 500
+  state_file: runtime/order_manager_state.json
+  flatten_on_stop: false
+
+strategies:
+  - strategy_id: EMA-CROSS-001
+    class_path: execsys.strategies.ema_cross:EmaCrossSignal
+    enabled: true
+    instruments: [AAPL.XNAS, MSFT.XNAS, TSLA.XNAS]
+    size: "10"
+    params:
+      bar_spec: 1-MINUTE-LAST-EXTERNAL
+      fast_period: 10
+      slow_period: 30
+      warmup_days: 3
+
+recorder:
+  enabled: true
+  directory: data/recorded
+  record_quotes: true
+  record_trades: true
+  record_bars: true
+  bar_spec: 1-MINUTE-LAST-EXTERNAL
+  queue_size: 200000
+  batch_size: 500
+  flush_interval_secs: 1.0
+
+telemetry:
+  enabled: true
+  service_name: execsys
+  otlp_endpoint: http://localhost:4317
+  export_interval_ms: 5000
+  console: false
+
+alerts:
+  enabled: true
+  dedupe_secs: 300
+  max_per_minute: 20
+
+ops:
+  control_file: runtime/control.json
+  risk_state_file: runtime/risk_state.json

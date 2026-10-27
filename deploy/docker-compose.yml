@@ -1,0 +1,33 @@
+# Observability stack (and optional IB Gateway) for local development.
+#
+#   docker compose -f deploy/docker-compose.yml up -d                     # telemetry only
+#   docker compose -f deploy/docker-compose.yml --profile gateway up -d   # + IB Gateway
+#
+# grafana/otel-lgtm bundles an OTel Collector (OTLP gRPC 4317 / HTTP 4318), Prometheus (metrics),
+# Tempo (traces), Loki (logs) and Grafana (http://localhost:3000, admin/admin).
+# Pin the image tags after the first successful pull.
+
+services:
+  otel-lgtm:
+    image: grafana/otel-lgtm:latest
+    container_name: execsys-otel-lgtm
+    ports:
+      - "3000:3000"   # Grafana
+      - "4317:4317"   # OTLP gRPC  <- execsys telemetry.otlp_endpoint
+      - "4318:4318"   # OTLP HTTP
+    restart: unless-stopped
+
+  ib-gateway:
+    profiles: ["gateway"]
+    image: ghcr.io/gnzsnz/ib-gateway:stable
+    container_name: execsys-ib-gateway
+    environment:
+      TWS_USERID: ${TWS_USERID}
+      TWS_PASSWORD: ${TWS_PASSWORD}
+      TRADING_MODE: ${TRADING_MODE:-paper}
+      READ_ONLY_API: "no"
+      TWS_ACCEPT_INCOMING: accept
+    ports:
+      - "127.0.0.1:4001:4003"   # live API
+      - "127.0.0.1:4002:4004"   # paper API
+    restart: unless-stopped
