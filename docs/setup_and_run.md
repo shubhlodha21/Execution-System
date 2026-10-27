@@ -65,7 +65,9 @@ python -m execsys.dashboard
 
 Shows client ID, PAPER/LIVE, connection, risk state, uptime, UTC/IST time, LTP and positions for every active ticker,
 each strategy's timeframe, current signal per ticker, last bar and per-strategy PnL, and the latest signals and orders.
-It reads `runtime/status.json`, so it opens no IB connection. `--once` prints a single screen.
+It reads `runtime/status.json`, so it opens no IB connection. Keys: `1` all · `2` tickers · `3` strategies ·
+`4` signals & orders · `p` pause · `q` quit. `--once` prints a single screen, `--view tickers` starts on one view,
+`--no-color` for plain text.
 
 ## 7b. Live FX monitor (terminal)
 

@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-27: dashboard redesign
+
+- Colour badges (RUNNING / RISK / PAPER), boxed tables, LTP only with green ▲ / red ▼ on each move, human-readable
+  timeframes ("5 min · mid"), strategy types and ages ("5m ago"); keyboard views (1–4), pause (p), quit (q);
+  full-screen with the terminal restored on exit. No new dependency.
+
 ## 2026-10-27: terminal dashboard
 
 - New `python -m execsys.dashboard`: live terminal view of the running app (client ID, mode, connection, risk state,

@@ -154,6 +154,8 @@ are configured in `execsys/app.py` and described in `Diagrams/System_V2_Architec
   events, risk state from `app.risk.state`, per-ticker LTP/bid/ask/age/position/unrealised PnL in base currency,
   per-strategy timeframe/params/direction/last bar/last signal from `app.signal.*`, last 10 signals and orders) and
   saves it through a `JsonStateStore` to `dashboard.status_file`. LTP = last trade, else quote mid, else last bar close.
-- **Dashboard CLI** (`__main__.py`, `render.py`): `python -m execsys.dashboard` redraws the screen every second from the
+- **Dashboard CLI** (`__main__.py`, `render.py`, ANSI colours and box tables, no extra library): full-screen, keys
+  `1` all · `2` tickers · `3` strategies · `4` signals & orders · `p` pause · `q` quit; LTP only (green ▲ / red ▼ on
+  each move), human-readable timeframes and ages. `python -m execsys.dashboard` redraws the screen every second from the
   snapshot plus the Order Manager state (per-strategy virtual position and realised PnL). Opens no IB connection and
   needs no client_id. Shows RUNNING / NOT RESPONDING (snapshot older than 5 s) / STOPPED. `render()` is pure and tested.

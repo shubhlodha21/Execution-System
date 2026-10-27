@@ -196,7 +196,7 @@ def test_status_publisher_snapshot_and_dashboard(tmp_path):
 
     from execsys.dashboard.publisher import StatusPublisher
     from execsys.dashboard.publisher import StatusPublisherConfig
-    from execsys.dashboard.render import render
+    from execsys.dashboard.render import build
 
     settings = make_settings(tmp_path)
     engine, om, risk = build_engine(settings)
@@ -219,6 +219,7 @@ def test_status_publisher_snapshot_and_dashboard(tmp_path):
     assert status["orders"][0]["status"] == "FILLED"
 
     om_state = json.loads((tmp_path / "om.json").read_text())
-    screen = render(status, om_state, status["ts_ns"], color=False)
+    screen = build(status, om_state, status["ts_ns"], color=False)
     assert "Client ID 99" in screen and "EMA-CROSS-001" in screen and "FILLED" in screen
     (tmp_path / "screen.txt").write_text(screen, encoding="utf-8")
+    (tmp_path / "screen_color.txt").write_text(build(status, om_state, status["ts_ns"]), encoding="utf-8")
