@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-10-27: SMART routing documented
+
+- Docs explain that stock ids like `AAPL.XNAS` already use IB SMART routing for data and orders
+  (configuration.md, modules.md, decisions.md D-009). No code change.
+
 ## 2026-10-27: Docker removed
 
 - Removed `deploy/docker-compose.yml` and all Docker instructions. Run IB Gateway/TWS directly; send telemetry to

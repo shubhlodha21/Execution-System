@@ -84,6 +84,13 @@ are configured in `execsys/app.py` and described in `Diagrams/System_V2_Architec
 - **Outputs:** `app.risk.state` on change, CRITICAL `app.alert`, gauges `risk_state`, `daily_pnl`, `gross_exposure`.
 - **Why a Strategy:** `DataActor` has no portfolio access. It never sends orders.
 
+## Market data source (Nautilus IB Data Client, configured in `app.py`)
+
+- **Job:** loads contracts for `settings.universe` (`load_ids`) and serves every quote/trade/bar subscription over
+  the one IB socket; duplicate subscriptions from several modules become one IB request.
+- **Routing:** stock contracts use `exchange=SMART` with the listing as `primaryExchange`, so data is IB's
+  SMART/consolidated feed, not a single exchange (details in [configuration.md](configuration.md#stock-data-and-orders-use-ib-smart-routing)).
+
 ## 8. Data Recorder: `execsys/persistence/recorder.py`, `writer.py`
 
 - **Job:** subscribe quotes, trades, bars for the universe; convert to string tuples (exact prices);

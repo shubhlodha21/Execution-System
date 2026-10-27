@@ -44,3 +44,10 @@ Newest last. Each entry: context → decision → consequences.
 ## D-008 · Venv outside OneDrive
 - **Decision:** keep the venv in `C:\Users\shubham\.venvs\execution_system`; runtime outputs (`logs/`, `data/`,
   `runtime/`) are git-ignored. Consider moving `data/` off OneDrive once volumes grow.
+
+## D-009 · Keep adapter SMART routing, no separate market-data module
+- **Context:** market data should come from IB SMART routing, not one exchange.
+- **Finding:** the IB adapter already sends stock contracts as `exchange=SMART` + `primaryExchange` (the `.XNAS`
+  suffix is only the Nautilus id), for data and orders alike.
+- **Decision:** no separate data module; keep the existing ids and document the behaviour.
+- **Consequences:** if a non-SMART venue is ever needed, it would require explicit `load_contracts` or raw symbology.

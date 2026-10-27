@@ -63,9 +63,18 @@ Unknown keys are rejected. Decimals are written as strings (`"1000"`).
 | `strategy_id` | unique, contains `-` (e.g. `EMA-CROSS-001`) |
 | `class_path` | `module:Class`, a `SignalStrategy` subclass |
 | `enabled` | turn on/off without deleting |
-| `instruments` | IB simplified symbology, e.g. `AAPL.XNAS`, `EUR/USD.IDEALPRO` |
+| `instruments` | IB simplified symbology, e.g. `AAPL.XNAS`, `EUR/USD.IDEALPRO`. For stocks the venue is only the primary-exchange label; data and orders use **SMART** (see below) |
 | `size` | position size per instrument when direction is ±1 |
 | `params` | strategy-specific; `bar_spec` is also used by the Risk Monitor's stale-data check |
 
 ### `recorder`, `telemetry`, `alerts`, `ops`
 See the defaults and comments in `config/settings.yaml`; meanings are in [modules.md](modules.md).
+
+## Stock data and orders use IB SMART routing
+
+For stocks, an id like `AAPL.XNAS` does **not** mean NASDAQ-only data. The IB adapter builds the contract as
+`exchange="SMART"`, `primaryExchange="NASDAQ"` (adapter source: `common/symbology.rs`, default stock case) and
+reuses the contract IB returns for every quote, trade, bar and order request. `primaryExchange` only identifies
+which listing is meant; IB's consolidated SMART feed and SMART order routing are what you get. Keep the
+`.XNAS` / `.XNYS` / `.ARCA` suffix: it is how Nautilus names the instrument, and data and execution must use the
+same id.
