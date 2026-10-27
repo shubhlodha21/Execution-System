@@ -14,7 +14,7 @@ node:
 ib:
   host: 127.0.0.1
   port: 4002              # IB Gateway paper (live = 4001)
-  client_id: 21           # one client_id per node, shared by data + execution
+  client_id: 99           # one client_id per process, shared by data + execution for all tickers
   market_data_type: realtime   # use delayed-frozen if the paper account has no data subscriptions
 
 risk_engine:              # Nautilus pre-trade checks (every order)

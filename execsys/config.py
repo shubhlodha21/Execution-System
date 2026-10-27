@@ -28,7 +28,7 @@ class _Model(BaseModel):
 class IBSettings(_Model):
     host: str = "127.0.0.1"
     port: int = 4002  # 4002 Gateway paper, 4001 Gateway live
-    client_id: int = 21
+    client_id: int = 99
     market_data_type: Literal["realtime", "frozen", "delayed", "delayed-frozen"] = "realtime"
     connection_timeout_secs: int = 10
     request_timeout_secs: int = 30

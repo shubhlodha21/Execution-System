@@ -4,7 +4,7 @@ Trading Execution System for IBKR
 A multi-strategy execution system for Interactive Brokers, built on
 [NautilusTrader](https://github.com/nautechsystems/nautilus_trader) v2 with OpenTelemetry for traces, metrics and logs.
 
-- One process, one IB connection (`client_id` 21) shared by market data and execution.
+- One process, one IB connection (`client_id` 99) shared by market data and execution.
 - Strategies only publish signals; a single Order Manager nets them into orders.
 - Account-level Risk Monitor (daily loss, position, exposure, stale data, rejects) with a manual kill switch.
 - Non-blocking market data recorder, persisted restart state, alerting (Telegram).

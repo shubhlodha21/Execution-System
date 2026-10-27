@@ -28,7 +28,7 @@ Every change to code or config updates the matching docs **in the same change**:
 - NautilusTrader **2.0.0rc7** from PyPI (same version as the source checkout in
   `D:\nautilus_trader_execution`, used as API reference: `python/nautilus_trader/**/*.pyi` stubs and `docs/`).
   v1 (`TradingNode`, Cython) APIs do **not** apply; never mix v1 and v2 in one venv.
-- IB Gateway paper on `127.0.0.1:4002`, `client_id` 21.
+- IB Gateway paper on `127.0.0.1:4002`, `client_id` 99 (trading app and FX monitor).
 
 ```bash
 # from the project root

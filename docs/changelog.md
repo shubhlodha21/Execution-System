@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-10-27: client_id 99
+
+- Default IB `client_id` is now **99** for the trading app (`ib.client_id`) and the FX monitor (reads the same
+  setting). One client_id serves all tickers over one connection; two processes cannot share it at the same time.
+
 ## 2026-10-27: live FX monitor
 
 - Header shows the time in both UTC and IST.

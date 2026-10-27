@@ -3,12 +3,12 @@
 ## One node, one connection
 
 Everything runs in **one Python process** hosting one NautilusTrader v2 `LiveNode`. The IB data
-client and the IB execution client use the **same `client_id` (21)**, so they share **one TCP socket**
+client and the IB execution client use the **same `client_id` (99)**, so they share **one TCP socket**
 to IB Gateway. All components run on the node's **single event thread** and communicate over the
 in-process **message bus**, so a message between modules is a function call, not a network hop.
 
 ```
-                        IB Gateway 127.0.0.1:4002 (paper) · client_id 21 · one socket
+                        IB Gateway 127.0.0.1:4002 (paper) · client_id 99 · one socket
                            ▲  subscriptions / orders          │  ticks, bars / order events
 ┌──────────────────────────┼──────────────────────────────────┼─────────────────────────────┐
 │ LiveNode (one process,   │  one event thread)               ▼                             │

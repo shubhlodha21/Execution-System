@@ -26,7 +26,7 @@ Unknown keys are rejected. Decimals are written as strings (`"1000"`).
 | Key | Default | Meaning |
 |---|---|---|
 | `host`, `port` | `127.0.0.1`, `4002` | Gateway (4002 paper, 4001 live) |
-| `client_id` | `21` | shared by data + execution; not a multiple of 1000 |
+| `client_id` | `99` | one connection for all tickers, shared by data + execution; not a multiple of 1000 |
 | `market_data_type` | `realtime` | `realtime` / `frozen` / `delayed` / `delayed-frozen` |
 | `connection_timeout_secs`, `request_timeout_secs` | `10`, `30` | |
 
