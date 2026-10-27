@@ -3,9 +3,10 @@
 ## 2026-10-27: live FX monitor
 
 - Header shows the time in both UTC and IST.
+- Default client_id is now the configured one (21); use `--client-id 22` while the trading app runs.
 
 - New `python -m execsys.tools.fx_monitor`: live FX quote table + cross-rate matrix in the terminal
-  (default EUR/USD, USD/CHF, USD/JPY), own data-only node on client_id + 1.
+  (default EUR/USD, USD/CHF, USD/JPY), own data-only node.
 - `build_node()` accepts an optional `instruments` list (defaults to `settings.universe`).
 
 ## 2026-10-27: SMART routing documented
