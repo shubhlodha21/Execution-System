@@ -12,7 +12,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8"]
+dev = [
+    "pytest>=8",
+    "pandas>=2",  # Nautilus backtest reports (generate_order_fills_report) used by the backtest tests
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

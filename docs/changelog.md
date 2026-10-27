@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-27: test dependency
+
+- `pandas` added to the `dev` extras; the backtest tests need it for Nautilus fill reports (found on EC2).
+
 ## 2026-10-27: RSI strategy, FX support
 
 - New `RsiSignal` strategy (overbought/oversold mean reversion with exit level), configured for FX
