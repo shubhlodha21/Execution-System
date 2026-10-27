@@ -126,3 +126,14 @@ are configured in `execsys/app.py` and described in `Diagrams/System_V2_Architec
 
 - `halt`, `reduce`, `flatten`, `resume` write `runtime/control.json` atomically; the Risk Monitor applies it at its
   next check (one `stat()` per check). `status` prints the persisted risk/Order Manager state.
+
+## 13. Tools: FX monitor (`execsys/tools/fx_monitor.py`, `fx_matrix.py`)
+
+- **Job:** live terminal view of FX quotes: table (bid, ask, mid, spread in pips, quote age) and a cross-rate
+  matrix (1 row currency = X column currency, from mids; inverse and one-hop crosses computed), refreshed every
+  `--refresh` seconds.
+- **Runs separately** from the trading app: its own data-only node, IB client_id = trading client_id + 1 by
+  default (two processes cannot share a client_id), loads only the requested pairs (`build_node(..., instruments=)`).
+- **Pairs:** IB IDEALPRO symbols (`EUR/USD`, `USD/CHF`, `USD/JPY`; `EURUSD` also accepted). IB quotes CHF as
+  `USD/CHF`; CHF→USD is shown in the matrix.
+- **Pure parts** (`fx_matrix.py`: `cross_matrix`, `render`) are unit-tested; the tool prints from its timer by design.

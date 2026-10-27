@@ -47,11 +47,15 @@ def build_strategy(s: StrategySettings) -> object:
     return _load_class(s.class_path)(s)
 
 
-def build_node(settings: Settings, data_only: bool = False) -> LiveNode:
+def build_node(settings: Settings, data_only: bool = False, instruments: list[str] | None = None) -> LiveNode:
+    """
+    `instruments` overrides which contracts are loaded (tools such as the FX monitor);
+    by default the node loads `settings.universe`.
+    """
     n, cfg = settings.node, settings.ib
     provider = ib.InteractiveBrokersInstrumentProviderConfig(
         symbology_method=ib.SymbologyMethod.SIMPLIFIED,
-        load_ids={InstrumentId.from_str(i) for i in settings.universe},
+        load_ids={InstrumentId.from_str(i) for i in (instruments or settings.universe)},
         load_contracts=[],
         build_options_chain=False,
         build_futures_chain=False,

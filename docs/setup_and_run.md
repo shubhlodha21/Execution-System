@@ -55,7 +55,18 @@ Stop with Ctrl+C: the Order Manager cancels working orders, writers flush, the s
 /c/Users/shubham/.venvs/execution_system/Scripts/python -m execsys.ops status
 ```
 
-## 7. Tests
+## 7. Live FX monitor (terminal)
+
+```bash
+python -m execsys.tools.fx_monitor                                  # EUR/USD, USD/CHF, USD/JPY
+python -m execsys.tools.fx_monitor --pairs EUR/USD GBP/USD USD/JPY
+```
+
+Shows a live quote table and a cross-rate matrix, refreshed every second; Ctrl+C to quit. It runs alongside the
+trading app with its own client_id (default 22). FX quotes only flow while the FX market is open
+(Sunday ~17:00 to Friday ~17:00 New York time).
+
+## 8. Tests
 
 ```bash
 /c/Users/shubham/.venvs/execution_system/Scripts/python -m pytest -q
