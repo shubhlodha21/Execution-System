@@ -1,6 +1,7 @@
 from execsys.dashboard.publisher import mask_account
 from execsys.dashboard.render import LtpTracker
 from execsys.dashboard.render import build
+from execsys.dashboard.render import clip
 from execsys.dashboard.render import human_params
 from execsys.dashboard.render import human_timeframe
 from execsys.dashboard.render import vlen
@@ -83,3 +84,10 @@ def test_human_labels():
     assert human_timeframe("1-MINUTE-LAST-EXTERNAL") == "1 min · last"
     assert human_params("fast_period=10, slow_period=30") == "fast 10 · slow 30"
     assert mask_account("DU1234567") == "DU****567"
+
+
+def test_clip_keeps_colours_and_width():
+    line = "[32m" + "x" * 50 + "[0m" + "y" * 50
+    out = clip(line, 40)
+    assert vlen(out) == 40 and out.endswith("…") and "[32m" in out
+    assert clip("short", 40) == "short"

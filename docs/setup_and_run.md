@@ -44,8 +44,9 @@ scripts/stop.sh               # graceful stop (cancels working orders, saves sta
 ```
 
 `start.sh` activates `.venv`, loads `.env` (`IB_ACCOUNT_ID`), checks IB Gateway is reachable, warns for live
-ports, and opens tmux session `execsys` with the app (left) and the dashboard (right). Detach with Ctrl+B then D,
-re-attach with `tmux attach -t execsys`. Needs `tmux` (`sudo apt install tmux`).
+ports, then opens tmux session `execsys` showing **only the dashboard** (full screen, no tmux bar). All strategies
+run in a hidden window `app` (`python run.py`): **Ctrl+B then n** switches to its logs and back. Detach with
+Ctrl+B then D, re-attach with `tmux attach -t execsys`. Needs `tmux` (`sudo apt install tmux`).
 
 ### Python entry script
 

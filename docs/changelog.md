@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-27: single-view start
+
+- `scripts/start.sh` shows only the full-screen dashboard; strategies run in a hidden tmux window via `run.py`
+  (fixes `IB_ACCOUNT_ID is not set` when a tmux server was already running, since panes do not inherit the script's
+  environment). Dashboard lines are clipped to the terminal width instead of wrapping.
+
 ## 2026-10-27: run.py
 
 - `python run.py [--data-only]` runs all enabled strategies; loads `.env` and works from any folder.

@@ -9,16 +9,16 @@ if ! tmux has-session -t "$SESSION" 2>/dev/null; then
   exit 0
 fi
 
-echo "Stopping execsys.app (graceful) ..."
-tmux send-keys -t "$SESSION:main.0" C-c
+echo "Stopping the strategies (graceful) ..."
+tmux send-keys -t "$SESSION:app" C-c
 for _ in $(seq 1 30); do
-  if ! pgrep -f "python -m execsys.app" >/dev/null; then
+  if ! pgrep -f "python run.py" >/dev/null; then
     break
   fi
   sleep 1
 done
-if pgrep -f "python -m execsys.app" >/dev/null; then
-  echo "WARNING: execsys.app still running after 30 s; check the session: tmux attach -t $SESSION" >&2
+if pgrep -f "python run.py" >/dev/null; then
+  echo "WARNING: the strategies are still running after 30 s; check the session: tmux attach -t $SESSION" >&2
   exit 1
 fi
 tmux kill-session -t "$SESSION"

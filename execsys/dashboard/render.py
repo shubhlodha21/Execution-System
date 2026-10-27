@@ -76,6 +76,26 @@ def vlen(text: str) -> int:
     return len(_ANSI.sub("", text))
 
 
+def clip(line: str, width: int) -> str:
+    """
+    Cut a line to `width` visible characters, keeping colour codes intact, so narrow terminals
+    show a clean right edge instead of wrapped table rows.
+    """
+    if vlen(line) <= width:
+        return line
+    out, seen, i = [], 0, 0
+    while i < len(line) and seen < width - 1:
+        m = _ANSI.match(line, i)
+        if m:
+            out.append(m.group())
+            i = m.end()
+            continue
+        out.append(line[i])
+        seen += 1
+        i += 1
+    return "".join(out) + RESET + "…"
+
+
 def _pad(text: str, width: int, align: str) -> str:
     gap = " " * max(0, width - vlen(text))
     return gap + text if align == "r" else text + gap

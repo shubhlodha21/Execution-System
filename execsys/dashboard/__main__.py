@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shutil
 import sys
 import time
 from pathlib import Path
@@ -25,6 +26,7 @@ from execsys.config import load_settings
 from execsys.dashboard.render import VIEWS
 from execsys.dashboard.render import LtpTracker
 from execsys.dashboard.render import build
+from execsys.dashboard.render import clip
 
 
 _ENTER = "\x1b[?1049h\x1b[?25l"  # alternate screen, hide cursor
@@ -125,7 +127,10 @@ def main() -> None:
             while True:
                 if not paused:
                     refresh()
-                sys.stdout.write(_HOME_CLEAR + screen())
+                cols, rows = shutil.get_terminal_size((160, 50))
+                lines = [clip(line, cols) for line in screen().splitlines()][:rows]
+                sys.stdout.write(_HOME_CLEAR + "
+".join(lines))
                 sys.stdout.flush()
                 key = keys.get(args.refresh)
                 if key is None:
