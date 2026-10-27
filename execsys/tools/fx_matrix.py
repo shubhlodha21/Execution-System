@@ -8,6 +8,10 @@ import datetime as dt
 from dataclasses import dataclass
 
 
+# India Standard Time has no daylight saving, so a fixed offset is exact and needs no tz database
+IST = dt.timezone(dt.timedelta(hours=5, minutes=30), "IST")
+
+
 @dataclass(frozen=True)
 class FxQuote:
     bid: float
@@ -72,7 +76,8 @@ def render(quotes: dict[str, FxQuote], pairs: list[str], now_ns: int) -> str:
     Quote table plus cross-rate matrix as plain text.
     """
     now = dt.datetime.fromtimestamp(now_ns / 1e9, dt.UTC)
-    lines = [f"FX monitor  {now:%Y-%m-%d %H:%M:%S} UTC  (IB IDEALPRO, Ctrl+C to quit)", ""]
+    ist = now.astimezone(IST)
+    lines = [f"FX monitor  {now:%Y-%m-%d %H:%M:%S} UTC  |  {ist:%Y-%m-%d %H:%M:%S} IST  (IB IDEALPRO, Ctrl+C to quit)", ""]
     lines.append(f"{'Pair':<10}{'Bid':>12}{'Ask':>12}{'Mid':>12}{'Spread':>9}{'Age':>8}")
     lines.append("-" * 63)
     mids: dict[tuple[str, str], float] = {}

@@ -51,6 +51,13 @@ def test_render_shows_table_and_matrix():
     assert "162.000" in out  # EUR->JPY via USD
 
 
+def test_render_header_shows_utc_and_ist():
+    now = 1_793_100_967_000_000_000  # 2026-10-27 11:36:07 UTC
+    header = render({}, ["EUR/USD.IDEALPRO"], now).splitlines()[0]
+    assert "2026-10-27 11:36:07 UTC" in header
+    assert "2026-10-27 17:06:07 IST" in header  # UTC + 5:30
+
+
 def test_fx_monitor_node_builds_offline():
     from execsys.app import build_node
     from execsys.config import load_settings

@@ -129,9 +129,10 @@ are configured in `execsys/app.py` and described in `Diagrams/System_V2_Architec
 
 ## 13. Tools: FX monitor (`execsys/tools/fx_monitor.py`, `fx_matrix.py`)
 
-- **Job:** live terminal view of FX quotes: table (bid, ask, mid, spread in pips, quote age) and a cross-rate
+- **Job:** live terminal view of FX quotes (header shows UTC and IST): table (bid, ask, mid, spread in pips, quote age) and a cross-rate
   matrix (1 row currency = X column currency, from mids; inverse and one-hop crosses computed), refreshed every
   `--refresh` seconds.
+- **One connection:** all pairs share a single IB client_id / socket.
 - **Runs separately** from the trading app: its own data-only node, IB client_id = trading client_id + 1 by
   default (two processes cannot share a client_id), loads only the requested pairs (`build_node(..., instruments=)`).
 - **Pairs:** IB IDEALPRO symbols (`EUR/USD`, `USD/CHF`, `USD/JPY`; `EURUSD` also accepted). IB quotes CHF as

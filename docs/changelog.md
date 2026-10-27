@@ -2,6 +2,8 @@
 
 ## 2026-10-27: live FX monitor
 
+- Header shows the time in both UTC and IST.
+
 - New `python -m execsys.tools.fx_monitor`: live FX quote table + cross-rate matrix in the terminal
   (default EUR/USD, USD/CHF, USD/JPY), own data-only node on client_id + 1.
 - `build_node()` accepts an optional `instruments` list (defaults to `settings.universe`).
