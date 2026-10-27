@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-10-27: start / stop scripts
+
+- `scripts/start.sh [data-only]` runs all enabled strategies plus the dashboard in tmux (loads `.env`, checks IB Gateway,
+  warns on live ports); `scripts/stop.sh` stops gracefully. `.gitattributes` keeps shell scripts LF.
+
 ## 2026-10-27: dashboard redesign
 
 - Colour badges (RUNNING / RISK / PAPER), boxed tables, LTP only with green ▲ / red ▼ on each move, human-readable

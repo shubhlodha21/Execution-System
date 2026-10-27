@@ -31,6 +31,7 @@ Every change to code or config updates the matching docs **in the same change**:
 - IB Gateway paper on `127.0.0.1:4002`, `client_id` 99 (trading app and FX monitor).
 
 ```bash
+# EC2 / Linux: scripts/start.sh [data-only]  and  scripts/stop.sh  (all strategies + dashboard in tmux)
 # from the project root
 /c/Users/shubham/.venvs/execution_system/Scripts/python -m pytest -q          # all tests (no IB needed)
 /c/Users/shubham/.venvs/execution_system/Scripts/python -m execsys.app        # run live (needs IB_ACCOUNT_ID)
@@ -56,6 +57,7 @@ execsys/
   ops/__main__.py      operator CLI (writes runtime/control.json)
   dashboard/           StatusPublisher (snapshot in the app) + terminal dashboard CLI
   tools/               standalone tools with their own data-only node (fx_monitor: live FX matrix)
+scripts/               start.sh / stop.sh: run all strategies + dashboard in tmux on EC2
 config/settings.yaml   the only place strategies, tickers and limits are defined
 tests/                 unit tests for pure logic + backtest end-to-end wiring tests
 docs/                  architecture, modules, config, observability, decisions, roadmap, changelog

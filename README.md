@@ -10,6 +10,7 @@ A multi-strategy execution system for Interactive Brokers, built on
 - Non-blocking market data recorder, persisted restart state, alerting (Telegram).
 
 ```bash
+scripts/start.sh                         # EC2: all strategies + dashboard in tmux (scripts/stop.sh to stop)
 pip install --pre -e ".[dev]"
 python -m pytest -q                      # tests, no IB needed
 python -m execsys.app --data-only        # connect to IB Gateway, no orders

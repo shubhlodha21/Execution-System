@@ -35,6 +35,20 @@ one warning and runs without telemetry; trading is unaffected. To turn it off en
 
 ## 5. Run
 
+### One command (EC2 / Linux): all strategies + dashboard
+
+```bash
+scripts/start.sh              # paper trading, all enabled strategies
+scripts/start.sh data-only    # signals only, no orders
+scripts/stop.sh               # graceful stop (cancels working orders, saves state)
+```
+
+`start.sh` activates `.venv`, loads `.env` (`IB_ACCOUNT_ID`), checks IB Gateway is reachable, warns for live
+ports, and opens tmux session `execsys` with the app (left) and the dashboard (right). Detach with Ctrl+B then D,
+re-attach with `tmux attach -t execsys`. Needs `tmux` (`sudo apt install tmux`).
+
+### Manually
+
 ```bash
 # data only: verify connection, instruments, bars, recording, signals (no orders)
 /c/Users/shubham/.venvs/execution_system/Scripts/python -m execsys.app --data-only
