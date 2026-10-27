@@ -36,6 +36,10 @@ are configured in `execsys/app.py` and described in `Diagrams/System_V2_Architec
   adapter adds a 1-second segment that IB rejects (error 321).
 - **Included:** `EmaCrossSignal`: EMA fast/slow crossover on IB 1-minute bars, warm-up from history,
   signals only from live bars, per-ticker duplicate-bar guard.
+- **Included:** `RsiSignal` (`strategies/rsi.py`): RSI(`period`) mean reversion: RSI ≤ `oversold` → long,
+  RSI ≥ `overbought` → short, back to `exit_level` → flat (`exit_level: null` holds until the opposite extreme).
+  Pure rule `rsi_signal()` is unit-tested. Configured twice: `RSI-FX-001` (EUR/USD, USD/JPY on `5-MINUTE-MID-EXTERNAL`)
+  and `RSI-EQ-001` (AAPL, MSFT on `5-MINUTE-LAST-EXTERNAL`).
 - **Must not:** place orders (it has no order API), size positions, do I/O, call other strategies.
 - **Failure:** an exception in one ticker is logged + counted (`execsys.handler.errors`); others continue.
 
@@ -78,6 +82,8 @@ are configured in `execsys/app.py` and described in `Diagrams/System_V2_Architec
   | manual `halt` / `reduce` / `flatten` | HALTED / REDUCING / HALTED + flatten |
 
 - **Latching:** HALTED stays until `python -m execsys.ops resume` (or a new UTC day for loss-based halts).
+- **Currency:** each instrument's PnL and exposure are converted to `risk_limits.base_currency` (USD) before
+  summing (USD/JPY PnL is in JPY); if no rate is available yet it is excluded and a warning is logged once.
 - **Daily PnL:** Portfolio total PnL minus the baseline taken at the first check of the UTC day
   (persisted in `ops.risk_state_file`).
 - **Fail-safe:** an exception during a check → REDUCING.
@@ -99,6 +105,7 @@ are configured in `execsys/app.py` and described in `Diagrams/System_V2_Architec
 - **Tick schema** (compact, from `Diagrams/Modules.xlsx`): `schema, tick_type, asset_class, instrument_id,
   ts_event_utc, ts_init_ns, mid_price, last_price, last_size, aggressor_side`.
 - **Bar schema:** `schema, bar_type, asset_class, instrument_id, ts_event_utc, ts_init_ns, open, high, low, close, volume`.
+- **FX:** no trade stream and MID bars instead of LAST (`bar_spec_for`), since IDEALPRO has no trades.
 - **Back-pressure:** queue full → row dropped + `execsys.recorder.dropped`; sink errors → 3 retries, then dropped and counted.
 - **On stop:** drains and flushes the queue.
 - **Next:** a TimescaleDB/Postgres sink implementing the same `Sink` protocol.

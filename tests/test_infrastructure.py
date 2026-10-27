@@ -20,7 +20,8 @@ from execsys.strategies.ema_cross import crossover
 def test_repo_settings_load():
     s = load_settings("config/settings.yaml", env={"IB_ACCOUNT_ID": "DU1"})
     assert s.ib.account_id == "DU1"
-    assert s.universe == ["AAPL.XNAS", "MSFT.XNAS", "TSLA.XNAS"]
+    assert s.universe == ["AAPL.XNAS", "MSFT.XNAS", "TSLA.XNAS", "EUR/USD.IDEALPRO", "USD/JPY.IDEALPRO"]
+    assert s.max_position("EUR/USD.IDEALPRO") == D(40000)
     assert s.max_position("TSLA.XNAS") == D(50)
     assert s.max_position("AAPL.XNAS") == D(100)
 

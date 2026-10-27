@@ -51,3 +51,8 @@ Newest last. Each entry: context → decision → consequences.
   suffix is only the Nautilus id), for data and orders alike.
 - **Decision:** no separate data module; keep the existing ids and document the behaviour.
 - **Consequences:** if a non-SMART venue is ever needed, it would require explicit `load_contracts` or raw symbology.
+
+## D-010 · Multi-currency risk in a base currency
+- **Context:** adding FX (USD/JPY PnL is in JPY) would have summed yen and dollars in daily loss and exposure.
+- **Decision:** Risk Monitor converts each instrument's PnL/exposure with `target_currency=risk_limits.base_currency`;
+  unconvertible values are excluded with a one-time warning. Recorder uses MID bars and no trades for FX.

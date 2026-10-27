@@ -66,7 +66,8 @@ class RiskLimits(_Model):
     Account-level limits enforced by the Risk Monitor.
     """
 
-    max_daily_loss: Decimal = Decimal("1000")  # positive number, in account currency
+    base_currency: str = "USD"  # PnL and exposure of every instrument are converted to this before summing
+    max_daily_loss: Decimal = Decimal("1000")  # positive number, in base_currency
     max_position_per_instrument: dict[str, Decimal] = Field(default_factory=dict)
     default_max_position: Decimal = Decimal("100")
     max_gross_exposure: Decimal = Decimal("250000")

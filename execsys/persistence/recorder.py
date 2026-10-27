@@ -40,6 +40,13 @@ _ASSET_CLASS = {
 }
 
 
+def bar_spec_for(asset_class: str, bar_spec: str) -> str:
+    """
+    FX has no trade prices on IDEALPRO, so LAST bars become MID bars (e.g. 1-MINUTE-MID-EXTERNAL).
+    """
+    return bar_spec.replace("-LAST-", "-MID-") if asset_class == "FX" else bar_spec
+
+
 def _utc(ns: int) -> str:
     return dt.datetime.fromtimestamp(ns / 1e9, dt.UTC).isoformat(timespec="microseconds")
 
@@ -75,13 +82,14 @@ class DataRecorder(DataActor):
         iid = instrument.id
         if iid not in self.instrument_ids or iid in self._asset_class:
             return
-        self._asset_class[iid] = _ASSET_CLASS.get(type(instrument).__name__, type(instrument).__name__.upper())
+        asset_class = _ASSET_CLASS.get(type(instrument).__name__, type(instrument).__name__.upper())
+        self._asset_class[iid] = asset_class
         if self.rs.record_quotes:
             self.subscribe_quotes(iid, client_id=self.client_id)
-        if self.rs.record_trades:
+        if self.rs.record_trades and asset_class != "FX":  # IDEALPRO FX has no trades
             self.subscribe_trades(iid, client_id=self.client_id)
         if self.rs.record_bars:
-            self.subscribe_bars(BarType.from_str(f"{iid}-{self.rs.bar_spec}"), client_id=self.client_id)
+            self.subscribe_bars(BarType.from_str(f"{iid}-{bar_spec_for(asset_class, self.rs.bar_spec)}"), client_id=self.client_id)
 
     def on_stop(self) -> None:
         self.writer.stop()

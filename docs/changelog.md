@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-10-27: RSI strategy, FX support
+
+- New `RsiSignal` strategy (overbought/oversold mean reversion with exit level), configured for FX
+  (`RSI-FX-001`: EUR/USD, USD/JPY, 5-min MID bars, 20,000 units) and equities (`RSI-EQ-001`: AAPL, MSFT, 5-min bars).
+- Risk Monitor converts PnL/exposure to `risk_limits.base_currency` (USD) before summing.
+- Recorder records FX with MID bars and no trade stream.
+- FX position limits (40,000) and `stale_data_secs: 360` for 5-minute bars.
+
 ## 2026-10-27: client_id 99
 
 - Default IB `client_id` is now **99** for the trading app (`ib.client_id`) and the FX monitor (reads the same

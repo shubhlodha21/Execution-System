@@ -9,7 +9,7 @@ Phases follow the Roadmap sheet in `Diagrams/System_V2_Architecture.xlsx`.
 | 3 | Signals logged | **Code ready** (`EmaCrossSignal`, backtest-tested) | signals match TWS chart; warm-up works |
 | 4 | Order Manager on paper | **Code ready**, backtest-tested; paper run pending | signals → orders → fills; no duplicates; netting |
 | 5 | Risk controls | **Code ready**, manual halt backtest-tested; paper breach test pending | forced breach → HALTED, orders blocked, alert |
-| 6 | More strategies | open | added via config only |
+| 6 | More strategies | **in progress**: RSI (FX + equities) added via config, backtest-tested | added via config only |
 | 7 | Operations | partial (ops CLI, alerts) | kill/restart test: reconciliation + state restore correct |
 | 8 | Live, small size | planned | after 1–2 weeks clean on paper |
 

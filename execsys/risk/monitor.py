@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Any
 
 from nautilus_trader.model import BarType
+from nautilus_trader.model import Currency
 from nautilus_trader.model import InstrumentId
 from nautilus_trader.model import StrategyId
 from nautilus_trader.trading import Strategy
@@ -47,6 +48,8 @@ class RiskMonitor(Strategy):
         super().__init__(StrategyConfig(strategy_id=StrategyId.from_str("RISK-MONITOR"), order_id_tag="RM"))
         self.settings = settings
         self.limits = settings.risk_limits
+        self._base_ccy = Currency.from_str(settings.risk_limits.base_currency)
+        self._unconverted_warned: set[str] = set()
         self.instrument_ids = [InstrumentId.from_str(i) for i in settings.universe]
         # Bars count as market data for staleness, so bar-only strategies are not flagged
         self._bar_types: dict[InstrumentId, list[BarType]] = {}
@@ -116,14 +119,17 @@ class RiskMonitor(Strategy):
         positions: dict[str, Decimal] = {}
         ages: dict[str, float | None] = {}
         for iid in self.instrument_ids:
-            pnl = self.portfolio.total_pnl(iid)
-            if pnl is not None:
-                total_pnl += pnl.as_decimal()
-            exposure = self.portfolio.net_exposure(iid)
-            if exposure is not None:
-                gross += abs(exposure.as_decimal())
             positions[str(iid)] = Decimal(self.portfolio.net_position(iid))
             ages[str(iid)] = self._data_age(iid, now)
+            # Convert to the base currency so USD/JPY PnL (in JPY) is not added to USD amounts
+            pnl = self.portfolio.total_pnl(iid, target_currency=self._base_ccy)
+            exposure = self.portfolio.net_exposure(iid, target_currency=self._base_ccy)
+            if pnl is not None:
+                total_pnl += pnl.as_decimal()
+            if exposure is not None:
+                gross += abs(exposure.as_decimal())
+            if positions[str(iid)] != 0 and (pnl is None or exposure is None):
+                self._warn_unconverted(str(iid))
 
         if self._day != today:  # new trading day: reset the daily PnL baseline
             self._day, self._pnl_baseline, self._halt_latched = today, total_pnl, False
@@ -143,6 +149,14 @@ class RiskMonitor(Strategy):
             rejects_in_window=len(self._rejects),
             manual=self._manual,
         )
+
+    def _warn_unconverted(self, iid: str) -> None:
+        if iid not in self._unconverted_warned:
+            self._unconverted_warned.add(iid)
+            self.log.warning(
+                f"{iid}: PnL/exposure could not be converted to {self._base_ccy} (no exchange rate yet); "
+                "excluded from daily loss and gross exposure until a rate is available",
+            )
 
     def _data_age(self, iid: InstrumentId, now: int) -> float | None:
         latest = [self.cache.quote(iid), self.cache.trade(iid)]

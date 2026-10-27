@@ -27,13 +27,13 @@ from nautilus_trader.model import TraderId
 from nautilus_trader.model import Venue
 
 from execsys.alerting.monitor import MonitoringActor
+from execsys.app import build_strategy
 from execsys.config import Settings
 from execsys.contracts import RiskState
 from execsys.ops.__main__ import write_command
 from execsys.order_manager.manager import OrderManager
 from execsys.persistence.recorder import DataRecorder
 from execsys.risk.monitor import RiskMonitor
-from execsys.strategies.ema_cross import EmaCrossSignal
 
 
 IID = "AAPL.XNAS"
@@ -41,19 +41,28 @@ MINUTE_NS = 60_000_000_000
 START_NS = 1_767_000_000_000_000_000
 
 
-def make_settings(tmp_path) -> Settings:
+EMA_STRATEGY = {
+    "strategy_id": "EMA-CROSS-001",
+    "class_path": "execsys.strategies.ema_cross:EmaCrossSignal",
+    "instruments": [IID],
+    "size": "10",
+    "params": {"bar_spec": "1-MINUTE-LAST-EXTERNAL", "fast_period": 5, "slow_period": 15, "warmup_days": 0},
+}
+RSI_STRATEGY = {
+    "strategy_id": "RSI-EQ-001",
+    "class_path": "execsys.strategies.rsi:RsiSignal",
+    "instruments": [IID],
+    "size": "10",
+    "params": {"bar_spec": "1-MINUTE-LAST-EXTERNAL", "period": 14, "overbought": 70, "oversold": 30,
+               "exit_level": 50, "warmup_days": 0},
+}
+
+
+def make_settings(tmp_path, strategy: dict = EMA_STRATEGY) -> Settings:
     return Settings.model_validate(
         {
             "order_manager": {"state_file": str(tmp_path / "om.json"), "min_order_interval_ms": 0},
-            "strategies": [
-                {
-                    "strategy_id": "EMA-CROSS-001",
-                    "class_path": "execsys.strategies.ema_cross:EmaCrossSignal",
-                    "instruments": [IID],
-                    "size": "10",
-                    "params": {"bar_spec": "1-MINUTE-LAST-EXTERNAL", "fast_period": 5, "slow_period": 15, "warmup_days": 0},
-                },
-            ],
+            "strategies": [strategy],
             "risk_limits": {"max_daily_loss": "1000000", "stale_data_secs": 300},
             "recorder": {"directory": str(tmp_path / "rec"), "flush_interval_secs": 0.05},
             "alerts": {"enabled": False},
@@ -114,7 +123,7 @@ def build_engine(settings: Settings):
     engine.add_instrument(instrument)
     engine.add_data(make_bars())
 
-    strategy = EmaCrossSignal(settings.strategies[0])
+    strategy = build_strategy(settings.strategies[0])
     om = OrderManager(settings)
     risk = RiskMonitor(settings)
     recorder = DataRecorder(settings)
@@ -161,5 +170,21 @@ def test_manual_halt_blocks_all_orders(tmp_path):
         assert len(engine.generate_order_fills_report()) == 0
         assert om.signals.target(IID) != 0  # signals still arrived, they were just not traded
         assert risk.state is RiskState.HALTED
+    finally:
+        engine.dispose()
+
+
+def test_rsi_strategy_flow(tmp_path):
+    engine, om, risk = build_engine(make_settings(tmp_path, RSI_STRATEGY))
+    try:
+        engine.run()
+        fills = engine.generate_order_fills_report()
+        assert len(fills) >= 3, "expected RSI entries and exits on the sine wave"
+        net = D(engine.portfolio.net_position(InstrumentId.from_str(IID)))
+        assert net == om.signals.target(IID)
+        assert abs(net) in (D(0), D(10))
+        assert set(om.virtual.positions(IID)) == {"RSI-EQ-001"}
+        assert om.virtual.positions(IID)["RSI-EQ-001"].quantity == net
+        assert risk.state is RiskState.ACTIVE
     finally:
         engine.dispose()

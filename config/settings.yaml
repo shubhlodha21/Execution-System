@@ -26,12 +26,15 @@ risk_engine:              # Nautilus pre-trade checks (every order)
     TSLA.XNAS: "50000"
 
 risk_limits:              # Risk Monitor (account level)
+  base_currency: USD      # PnL/exposure of every instrument converted to this (USD/JPY PnL is in JPY)
   max_daily_loss: "1000"
   default_max_position: "100"
   max_position_per_instrument:
     TSLA.XNAS: "50"
+    EUR/USD.IDEALPRO: "40000"   # FX sizes are in base-currency units
+    USD/JPY.IDEALPRO: "40000"
   max_gross_exposure: "250000"
-  stale_data_secs: 120
+  stale_data_secs: 360    # > one 5-minute bar
   max_rejects_per_window: 5
   reject_window_secs: 60
   flatten_on_halt: false
@@ -57,6 +60,32 @@ strategies:
       bar_spec: 1-MINUTE-LAST-EXTERNAL
       fast_period: 10
       slow_period: 30
+      warmup_days: 3
+
+  - strategy_id: RSI-FX-001         # RSI overbought/oversold on forex
+    class_path: execsys.strategies.rsi:RsiSignal
+    enabled: true
+    instruments: [EUR/USD.IDEALPRO, USD/JPY.IDEALPRO]
+    size: "20000"                   # units of the base currency (IDEALPRO minimum is 20,000)
+    params:
+      bar_spec: 5-MINUTE-MID-EXTERNAL   # FX: MID (no trades on IDEALPRO)
+      period: 14
+      overbought: 70                # RSI >= 70 -> short
+      oversold: 30                  # RSI <= 30 -> long
+      exit_level: 50                # back to 50 -> flat (null = hold until opposite extreme)
+      warmup_days: 3
+
+  - strategy_id: RSI-EQ-001         # RSI overbought/oversold on equities
+    class_path: execsys.strategies.rsi:RsiSignal
+    enabled: true
+    instruments: [AAPL.XNAS, MSFT.XNAS]
+    size: "10"
+    params:
+      bar_spec: 5-MINUTE-LAST-EXTERNAL
+      period: 14
+      overbought: 70
+      oversold: 30
+      exit_level: 50
       warmup_days: 3
 
 recorder:

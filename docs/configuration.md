@@ -39,7 +39,8 @@ Unknown keys are rejected. Decimals are written as strings (`"1000"`).
 ### `risk_limits` (Risk Monitor)
 | Key | Default | Meaning |
 |---|---|---|
-| `max_daily_loss` | `1000` | HALTED at daily PnL ≤ −value |
+| `base_currency` | `USD` | PnL and exposure of all instruments converted to this before summing |
+| `max_daily_loss` | `1000` | HALTED at daily PnL ≤ −value (in `base_currency`) |
 | `default_max_position`, `max_position_per_instrument` | `100`, `{}` | REDUCING above; also clamps Order Manager targets |
 | `max_gross_exposure` | `250000` | REDUCING above |
 | `stale_data_secs` | `120` | REDUCING when holding a position with no fresh quote/trade/bar |
@@ -64,8 +65,11 @@ Unknown keys are rejected. Decimals are written as strings (`"1000"`).
 | `class_path` | `module:Class`, a `SignalStrategy` subclass |
 | `enabled` | turn on/off without deleting |
 | `instruments` | IB simplified symbology, e.g. `AAPL.XNAS`, `EUR/USD.IDEALPRO`. For stocks the venue is only the primary-exchange label; data and orders use **SMART** (see below) |
-| `size` | position size per instrument when direction is ±1 |
-| `params` | strategy-specific; `bar_spec` is also used by the Risk Monitor's stale-data check |
+| `size` | position size per instrument when direction is ±1 (FX: base-currency units, e.g. `20000`) |
+| `params` | strategy-specific; `bar_spec` is also used by the Risk Monitor's stale-data check. Equities `…-LAST-EXTERNAL`, FX `…-MID-EXTERNAL` |
+
+**`RsiSignal` params:** `bar_spec`, `period` (14), `overbought` (70), `oversold` (30), `exit_level` (50, or `null`),
+`warmup_days` (3). **`EmaCrossSignal` params:** `bar_spec`, `fast_period` (10), `slow_period` (30), `warmup_days` (3).
 
 ### `recorder`, `telemetry`, `alerts`, `ops`
 See the defaults and comments in `config/settings.yaml`; meanings are in [modules.md](modules.md).
