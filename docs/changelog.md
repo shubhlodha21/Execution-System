@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-27: start.sh restarts
+
+- `scripts/start.sh` restarts a running session cleanly instead of refusing, and rejects the example account `DU0000000`.
+
 ## 2026-10-27: single-view start
 
 - `scripts/start.sh` shows only the full-screen dashboard; strategies run in a hidden tmux window via `run.py`

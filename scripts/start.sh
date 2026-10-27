@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Start ALL enabled strategies (config/settings.yaml) and show ONLY the dashboard.
+# The one command to run: start ALL enabled strategies (config/settings.yaml) and show ONLY the dashboard.
+# If execsys is already running it is stopped cleanly first and started fresh.
 #
 #   scripts/start.sh               # paper trading (needs IB_ACCOUNT_ID in .env or the environment)
 #   scripts/start.sh data-only     # signals only, no orders
@@ -37,6 +38,9 @@ fi
 if [[ "$MODE" == "paper" && -z "${IB_ACCOUNT_ID:-}" ]]; then
   die "IB_ACCOUNT_ID is not set: add it to .env (see .env.example) or run 'scripts/start.sh data-only'"
 fi
+if [[ "$MODE" == "paper" && "${IB_ACCOUNT_ID}" == "DU0000000" ]]; then
+  die "IB_ACCOUNT_ID in .env is still the example value DU0000000: set your paper account (DU...)"
+fi
 
 # Settings summary and IB Gateway reachability check
 read -r IB_HOST IB_PORT IB_CLIENT_ID STRATEGIES < <(python - <<'PY'
@@ -54,7 +58,8 @@ if [[ "$IB_PORT" != "4002" && "$IB_PORT" != "7497" ]]; then
 fi
 
 if tmux has-session -t "$SESSION" 2>/dev/null; then
-  die "tmux session '$SESSION' is already running: 'tmux attach -t $SESSION', or stop it with scripts/stop.sh"
+  echo "execsys is already running: restarting it ..."
+  "$ROOT/scripts/stop.sh" || die "could not stop the running session cleanly; check it with: tmux attach -t $SESSION"
 fi
 
 echo "Starting execsys ($MODE) on $IB_HOST:$IB_PORT, client_id $IB_CLIENT_ID"

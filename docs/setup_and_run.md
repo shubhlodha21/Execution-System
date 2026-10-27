@@ -43,8 +43,9 @@ scripts/start.sh data-only    # signals only, no orders
 scripts/stop.sh               # graceful stop (cancels working orders, saves state)
 ```
 
-`start.sh` activates `.venv`, loads `.env` (`IB_ACCOUNT_ID`), checks IB Gateway is reachable, warns for live
-ports, then opens tmux session `execsys` showing **only the dashboard** (full screen, no tmux bar). All strategies
+`start.sh` is the only command needed: running it again restarts cleanly (the old session is stopped with
+`stop.sh` first). It activates `.venv`, loads `.env` (`IB_ACCOUNT_ID`, rejects the example `DU0000000`), checks IB
+Gateway is reachable, warns for live ports, then opens tmux session `execsys` showing **only the dashboard** (full screen, no tmux bar). All strategies
 run in a hidden window `app` (`python run.py`): **Ctrl+B then n** switches to its logs and back. Detach with
 Ctrl+B then D, re-attach with `tmux attach -t execsys`. Needs `tmux` (`sudo apt install tmux`).
 
