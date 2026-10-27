@@ -46,7 +46,7 @@ def setup_telemetry(settings: TelemetrySettings, log_dir: str, attributes: dict[
         # does not depend on telemetry, so run without it and say so once.
         message = (
             f"OTel collector {settings.otlp_endpoint} unreachable; telemetry export disabled for this run "
-            "(start it with: docker compose -f deploy/docker-compose.yml up -d)"
+            "(start your OTel collector, or set telemetry.enabled: false)"
         )
         _log.warning(message)
         print(f"WARNING: {message}", flush=True)

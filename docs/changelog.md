@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-10-27: Docker removed
+
+- Removed `deploy/docker-compose.yml` and all Docker instructions. Run IB Gateway/TWS directly; send telemetry to
+  any OpenTelemetry collector or backend via `telemetry.otlp_endpoint`, or set `telemetry.enabled: false`.
+
 ## 2026-10-27: fixes from first EC2 run
 
 - Strategy warm-up now requests an exact whole-day window with an explicit end (`warmup_window`). Before, the IB

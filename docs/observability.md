@@ -2,7 +2,7 @@
 
 `execsys/telemetry/otel.py` sets up three OTel signals with resource attributes
 `service.name=execsys`, `trader_id`, `ib.client_id`, exported over OTLP gRPC to `telemetry.otlp_endpoint`
-(the `grafana/otel-lgtm` container in `deploy/`). All export runs on SDK background threads.
+(any OpenTelemetry collector or hosted backend). All export runs on SDK background threads.
 
 If the collector is not reachable at startup, the app prints one warning and runs **without telemetry export**
 for that run (trading is unaffected), instead of retrying and flooding the console. Start the collector and

@@ -15,8 +15,6 @@ python -m venv /c/Users/shubham/.venvs/execution_system
 
 - Paper: port **4002**, live: **4001**. Settings → API: enable socket clients, trusted IP 127.0.0.1,
   **Read-Only API off** for trading.
-- Or run it in Docker: `docker compose -f deploy/docker-compose.yml --profile gateway up -d`
-  with `TWS_USERID`, `TWS_PASSWORD`, `TRADING_MODE=paper` in the environment.
 - Without market data subscriptions on the paper account, set `ib.market_data_type: delayed-frozen`.
 
 ## 3. Secrets
@@ -28,14 +26,12 @@ Load them into your shell before running, e.g. in PowerShell:
 Get-Content .env | Where-Object { $_ -match '^[A-Z_]+=' } | ForEach-Object { $k,$v = $_ -split '=',2; Set-Item "env:$k" $v }
 ```
 
-## 4. Observability stack (optional but recommended)
+## 4. Telemetry (optional)
 
-```bash
-docker compose -f deploy/docker-compose.yml up -d
-```
-
-Grafana at http://localhost:3000 (admin/admin). If no collector is running, set `telemetry.enabled: false`
-(or the exporter just logs connection warnings; trading is unaffected).
+Telemetry is exported over OTLP gRPC to `telemetry.otlp_endpoint` (default `http://127.0.0.1:4317`). Point it at
+any OpenTelemetry collector or hosted backend you run. If nothing is listening there at startup, the app prints
+one warning and runs without telemetry; trading is unaffected. To turn it off entirely, set
+`telemetry.enabled: false`. Logs are always written to `logs/`.
 
 ## 5. Run
 

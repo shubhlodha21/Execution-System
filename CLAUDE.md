@@ -36,7 +36,6 @@ Every change to code or config updates the matching docs **in the same change**:
 /c/Users/shubham/.venvs/execution_system/Scripts/python -m execsys.app        # run live (needs IB_ACCOUNT_ID)
 /c/Users/shubham/.venvs/execution_system/Scripts/python -m execsys.app --data-only
 /c/Users/shubham/.venvs/execution_system/Scripts/python -m execsys.ops status # halt|reduce|flatten|resume|status
-docker compose -f deploy/docker-compose.yml up -d                             # Grafana + OTel collector
 ```
 
 ## Layout
@@ -55,7 +54,6 @@ execsys/
   ops/__main__.py      operator CLI (writes runtime/control.json)
 config/settings.yaml   the only place strategies, tickers and limits are defined
 tests/                 unit tests for pure logic + backtest end-to-end wiring tests
-deploy/                docker-compose: grafana/otel-lgtm (+ optional IB Gateway)
 docs/                  architecture, modules, config, observability, decisions, roadmap, changelog
 Diagrams/              original drawings and spreadsheets (user-owned, read-only, local only: git-ignored)
 ```
