@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-10-27: no tmux kill
+
+- `scripts/stop.sh` never kills tmux: it sends Ctrl+C and Enter, waits, and lets the session close by itself;
+  if something keeps it open it only reports it.
+
 ## 2026-10-27: start.sh restarts
 
 - `scripts/start.sh` restarts a running session cleanly instead of refusing, and rejects the example account `DU0000000`.
