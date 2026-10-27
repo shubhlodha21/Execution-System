@@ -47,6 +47,15 @@ scripts/stop.sh               # graceful stop (cancels working orders, saves sta
 ports, and opens tmux session `execsys` with the app (left) and the dashboard (right). Detach with Ctrl+B then D,
 re-attach with `tmux attach -t execsys`. Needs `tmux` (`sudo apt install tmux`).
 
+### Python entry script
+
+```bash
+python run.py                 # all enabled strategies (loads IB_ACCOUNT_ID from .env)
+python run.py --data-only     # signals only, no orders
+```
+
+`run.py` is the same as `python -m execsys.app`, plus it loads `.env` and can be started from any folder.
+
 ### Manually
 
 ```bash

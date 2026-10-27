@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-27: run.py
+
+- `python run.py [--data-only]` runs all enabled strategies; loads `.env` and works from any folder.
+
 ## 2026-10-27: start / stop scripts
 
 - `scripts/start.sh [data-only]` runs all enabled strategies plus the dashboard in tmux (loads `.env`, checks IB Gateway,

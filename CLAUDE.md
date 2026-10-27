@@ -31,6 +31,7 @@ Every change to code or config updates the matching docs **in the same change**:
 - IB Gateway paper on `127.0.0.1:4002`, `client_id` 99 (trading app and FX monitor).
 
 ```bash
+# python run.py [--data-only]  = execsys.app + .env loading, all enabled strategies
 # EC2 / Linux: scripts/start.sh [data-only]  and  scripts/stop.sh  (all strategies + dashboard in tmux)
 # from the project root
 /c/Users/shubham/.venvs/execution_system/Scripts/python -m pytest -q          # all tests (no IB needed)
