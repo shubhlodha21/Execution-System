@@ -146,3 +146,14 @@ are configured in `execsys/app.py` and described in `Diagrams/System_V2_Architec
 - **Pairs:** IB IDEALPRO symbols (`EUR/USD`, `USD/CHF`, `USD/JPY`; `EURUSD` also accepted). IB quotes CHF as
   `USD/CHF`; CHF→USD is shown in the matrix.
 - **Pure parts** (`fx_matrix.py`: `cross_matrix`, `render`) are unit-tested; the tool prints from its timer by design.
+
+## 14. Terminal dashboard (`execsys/dashboard/`)
+
+- **StatusPublisher** (`publisher.py`, registered as `STATUS-PUBLISHER-SP`, a Strategy that never trades): every
+  `dashboard.interval_ms` builds a snapshot (node, client_id, PAPER/LIVE, masked account, IB connection from socket
+  events, risk state from `app.risk.state`, per-ticker LTP/bid/ask/age/position/unrealised PnL in base currency,
+  per-strategy timeframe/params/direction/last bar/last signal from `app.signal.*`, last 10 signals and orders) and
+  saves it through a `JsonStateStore` to `dashboard.status_file`. LTP = last trade, else quote mid, else last bar close.
+- **Dashboard CLI** (`__main__.py`, `render.py`): `python -m execsys.dashboard` redraws the screen every second from the
+  snapshot plus the Order Manager state (per-strategy virtual position and realised PnL). Opens no IB connection and
+  needs no client_id. Shows RUNNING / NOT RESPONDING (snapshot older than 5 s) / STOPPED. `render()` is pure and tested.

@@ -37,6 +37,7 @@ Every change to code or config updates the matching docs **in the same change**:
 /c/Users/shubham/.venvs/execution_system/Scripts/python -m execsys.app --data-only
 /c/Users/shubham/.venvs/execution_system/Scripts/python -m execsys.ops status # halt|reduce|flatten|resume|status
 /c/Users/shubham/.venvs/execution_system/Scripts/python -m execsys.tools.fx_monitor   # live FX quotes + cross-rate matrix
+/c/Users/shubham/.venvs/execution_system/Scripts/python -m execsys.dashboard          # terminal dashboard of the running app
 ```
 
 ## Layout
@@ -53,6 +54,7 @@ execsys/
   telemetry/otel.py    OTel traces/metrics/logs setup, Metrics, OrderTracer
   alerting/            monitor.py (bus -> alerts) + dispatcher.py (threaded, dedupe, Telegram)
   ops/__main__.py      operator CLI (writes runtime/control.json)
+  dashboard/           StatusPublisher (snapshot in the app) + terminal dashboard CLI
   tools/               standalone tools with their own data-only node (fx_monitor: live FX matrix)
 config/settings.yaml   the only place strategies, tickers and limits are defined
 tests/                 unit tests for pure logic + backtest end-to-end wiring tests

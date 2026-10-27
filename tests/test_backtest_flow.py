@@ -67,6 +67,7 @@ def make_settings(tmp_path, strategy: dict = EMA_STRATEGY) -> Settings:
             "recorder": {"directory": str(tmp_path / "rec"), "flush_interval_secs": 0.05},
             "alerts": {"enabled": False},
             "ops": {"control_file": str(tmp_path / "control.json"), "risk_state_file": str(tmp_path / "risk.json")},
+            "dashboard": {"status_file": str(tmp_path / "status.json")},
         },
     )
 
@@ -188,3 +189,36 @@ def test_rsi_strategy_flow(tmp_path):
         assert risk.state is RiskState.ACTIVE
     finally:
         engine.dispose()
+
+
+def test_status_publisher_snapshot_and_dashboard(tmp_path):
+    import json
+
+    from execsys.dashboard.publisher import StatusPublisher
+    from execsys.dashboard.publisher import StatusPublisherConfig
+    from execsys.dashboard.render import render
+
+    settings = make_settings(tmp_path)
+    engine, om, risk = build_engine(settings)
+    engine.add_strategy(StatusPublisher(StatusPublisherConfig(settings)))
+    try:
+        engine.run()
+    finally:
+        engine.dispose()
+
+    status = json.loads((tmp_path / "status.json").read_text())
+    assert status["stopped"] is True
+    assert status["node"]["client_id"] == settings.ib.client_id
+    assert status["node"]["mode"] == "PAPER"
+    ticker = status["tickers"][0]
+    assert ticker["id"] == IID and ticker["strategies"] == ["EMA-CROSS-001"]
+    strat = status["strategies"][0]
+    assert strat["id"] == "EMA-CROSS-001" and strat["signals"] > 0
+    assert strat["tickers"][0]["bar_close"] is not None
+    assert status["signals"] and status["orders"]
+    assert status["orders"][0]["status"] == "FILLED"
+
+    om_state = json.loads((tmp_path / "om.json").read_text())
+    screen = render(status, om_state, status["ts_ns"], color=False)
+    assert "Client ID 99" in screen and "EMA-CROSS-001" in screen and "FILLED" in screen
+    (tmp_path / "screen.txt").write_text(screen, encoding="utf-8")

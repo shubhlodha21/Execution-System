@@ -43,6 +43,7 @@ in-process **message bus**, so a message between modules is a function call, not
 | Alerts | Any module → `app.alert` → Monitoring actor → AlertDispatcher queue → log/Telegram (worker thread) |
 | Manual control | `python -m execsys.ops halt` → `runtime/control.json` → Risk Monitor (next check) → `app.risk.state` |
 | Persistence | Recorder `on_*` → bounded queue → BatchWriter thread → CSV; OM/Risk state → JsonStateStore thread → `runtime/*.json` |
+| Dashboard | StatusPublisher timer (1 s) → snapshot → JsonStateStore thread → `runtime/status.json` → `python -m execsys.dashboard` (separate process) |
 | Telemetry | Handlers record counters/histograms/spans → OTel SDK background exporters → OTLP → Collector |
 
 ## Topics and contracts (`execsys/contracts.py`)

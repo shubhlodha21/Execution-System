@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-27: terminal dashboard
+
+- New `python -m execsys.dashboard`: live terminal view of the running app (client ID, mode, connection, risk state,
+  UTC/IST time, LTP and positions per ticker, per-strategy timeframe, signal, last bar and PnL, recent signals and
+  orders). Fed by the new read-only `StatusPublisher` through `runtime/status.json`; new `dashboard:` settings.
+
 ## 2026-10-27: test dependency
 
 - `pandas` added to the `dev` extras; the backtest tests need it for Nautilus fill reports (found on EC2).

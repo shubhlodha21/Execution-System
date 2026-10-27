@@ -55,7 +55,19 @@ Stop with Ctrl+C: the Order Manager cancels working orders, writers flush, the s
 /c/Users/shubham/.venvs/execution_system/Scripts/python -m execsys.ops status
 ```
 
-## 7. Live FX monitor (terminal)
+## 7. Terminal dashboard
+
+With the app running, open a second terminal (or tmux pane) in the project folder:
+
+```bash
+python -m execsys.dashboard
+```
+
+Shows client ID, PAPER/LIVE, connection, risk state, uptime, UTC/IST time, LTP and positions for every active ticker,
+each strategy's timeframe, current signal per ticker, last bar and per-strategy PnL, and the latest signals and orders.
+It reads `runtime/status.json`, so it opens no IB connection. `--once` prints a single screen.
+
+## 7b. Live FX monitor (terminal)
 
 ```bash
 python -m execsys.tools.fx_monitor                                  # EUR/USD, USD/CHF, USD/JPY

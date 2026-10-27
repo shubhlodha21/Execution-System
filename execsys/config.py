@@ -126,6 +126,12 @@ class AlertSettings(_Model):
     telegram_chat_id: str | None = None  # from env TELEGRAM_CHAT_ID
 
 
+class DashboardSettings(_Model):
+    enabled: bool = True  # StatusPublisher writes a snapshot for `python -m execsys.dashboard`
+    status_file: str = "runtime/status.json"
+    interval_ms: int = 1000
+
+
 class OpsSettings(_Model):
     control_file: str = "runtime/control.json"
     risk_state_file: str = "runtime/risk_state.json"
@@ -142,6 +148,7 @@ class Settings(_Model):
     telemetry: TelemetrySettings = TelemetrySettings()
     alerts: AlertSettings = AlertSettings()
     ops: OpsSettings = OpsSettings()
+    dashboard: DashboardSettings = DashboardSettings()
 
     @model_validator(mode="after")
     def _unique_ids(self) -> Settings:

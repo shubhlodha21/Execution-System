@@ -71,6 +71,13 @@ Unknown keys are rejected. Decimals are written as strings (`"1000"`).
 **`RsiSignal` params:** `bar_spec`, `period` (14), `overbought` (70), `oversold` (30), `exit_level` (50, or `null`),
 `warmup_days` (3). **`EmaCrossSignal` params:** `bar_spec`, `fast_period` (10), `slow_period` (30), `warmup_days` (3).
 
+### `dashboard`
+| Key | Default | Meaning |
+|---|---|---|
+| `enabled` | `true` | register the StatusPublisher in the app |
+| `status_file` | `runtime/status.json` | snapshot read by `python -m execsys.dashboard` |
+| `interval_ms` | `1000` | snapshot interval |
+
 ### `recorder`, `telemetry`, `alerts`, `ops`
 See the defaults and comments in `config/settings.yaml`; meanings are in [modules.md](modules.md).
 

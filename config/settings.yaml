@@ -111,6 +111,11 @@ alerts:
   dedupe_secs: 300
   max_per_minute: 20
 
+dashboard:                # terminal dashboard: python -m execsys.dashboard
+  enabled: true
+  status_file: runtime/status.json
+  interval_ms: 1000
+
 ops:
   control_file: runtime/control.json
   risk_state_file: runtime/risk_state.json
