@@ -7,6 +7,7 @@ data and publishes `Signal` messages; the Order Manager is the only component th
 
 from __future__ import annotations
 
+import datetime as dt
 from typing import Any
 
 from nautilus_trader.common import DataActor
@@ -22,6 +23,18 @@ from execsys.telemetry import get_metrics
 
 
 IB_CLIENT = ClientId.from_str("IB")
+
+
+def warmup_window(now: dt.datetime, days: int) -> tuple[dt.datetime, dt.datetime]:
+    """
+    History window of exactly `days` whole days ending at `now`, for `request_bars`.
+
+    Always pass both ends: with no end the IB adapter uses its own (slightly later) "now", so the
+    span becomes N days plus a fraction of a second, which it requests as an extra 1-second
+    segment that IB rejects for minute bars (error 321 "duration is invalid").
+    """
+    end = now.replace(microsecond=0)
+    return end - dt.timedelta(days=days), end
 
 
 class SignalStrategy(DataActor):

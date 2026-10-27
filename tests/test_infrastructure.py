@@ -103,3 +103,25 @@ def test_ops_command_file(tmp_path):
     data = json.loads(p.read_text())
     assert data["command"] == "halt"
     assert data["ts"] <= time.time()
+
+
+def test_warmup_window_is_whole_days_with_explicit_end():
+    import datetime as dt
+
+    from execsys.strategies.base import warmup_window
+
+    now = dt.datetime(2026, 10, 27, 11, 0, 22, 414_980, tzinfo=dt.UTC)
+    start, end = warmup_window(now, 3)
+    assert end - start == dt.timedelta(days=3)  # no leftover seconds segment for IB
+    assert end.microsecond == 0 and end <= now
+
+
+def test_telemetry_disabled_when_collector_unreachable(tmp_path):
+    from execsys.config import TelemetrySettings
+    from execsys.telemetry.otel import collector_reachable
+    from execsys.telemetry.otel import setup_telemetry
+
+    endpoint = "http://127.0.0.1:9"  # discard port: nothing listens
+    assert not collector_reachable(endpoint, timeout=0.5)
+    shutdown = setup_telemetry(TelemetrySettings(otlp_endpoint=endpoint), str(tmp_path), {})
+    shutdown()  # no-op, nothing configured

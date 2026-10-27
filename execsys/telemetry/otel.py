@@ -11,10 +11,12 @@ from __future__ import annotations
 import json
 import logging
 import logging.handlers
+import socket
 import threading
 from collections import OrderedDict
 from collections.abc import Callable
 from pathlib import Path
+from urllib.parse import urlparse
 
 from opentelemetry import metrics
 from opentelemetry import trace
@@ -38,6 +40,16 @@ def setup_telemetry(settings: TelemetrySettings, log_dir: str, attributes: dict[
     """
     _setup_python_logging(log_dir)
     if not settings.enabled:
+        return lambda: None
+    if not settings.console and not collector_reachable(settings.otlp_endpoint):
+        # Without a collector every export fails and retries, flooding the console; trading
+        # does not depend on telemetry, so run without it and say so once.
+        message = (
+            f"OTel collector {settings.otlp_endpoint} unreachable; telemetry export disabled for this run "
+            "(start it with: docker compose -f deploy/docker-compose.yml up -d)"
+        )
+        _log.warning(message)
+        print(f"WARNING: {message}", flush=True)
         return lambda: None
 
     from opentelemetry._logs import set_logger_provider
@@ -99,6 +111,18 @@ def setup_telemetry(settings: TelemetrySettings, log_dir: str, attributes: dict[
                 _log.exception("telemetry shutdown failed")
 
     return shutdown
+
+
+def collector_reachable(endpoint: str, timeout: float = 2.0) -> bool:
+    """
+    TCP check of the OTLP endpoint (e.g. http://127.0.0.1:4317) at startup.
+    """
+    url = urlparse(endpoint if "://" in endpoint else f"http://{endpoint}")
+    try:
+        with socket.create_connection((url.hostname or "127.0.0.1", url.port or 4317), timeout=timeout):
+            return True
+    except OSError:
+        return False
 
 
 class _JsonFormatter(logging.Formatter):

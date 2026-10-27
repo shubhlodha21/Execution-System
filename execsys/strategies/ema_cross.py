@@ -7,7 +7,6 @@ from historical bars; signals are emitted only from live bars.
 
 from __future__ import annotations
 
-import datetime as dt
 from dataclasses import dataclass
 from dataclasses import field
 from typing import Any
@@ -19,6 +18,7 @@ from nautilus_trader.model import InstrumentId
 
 from execsys.config import StrategySettings
 from execsys.strategies.base import SignalStrategy
+from execsys.strategies.base import warmup_window
 
 
 @dataclass
@@ -71,8 +71,8 @@ class EmaCrossSignal(SignalStrategy):
             return
         state.live = True
         if self.warmup_days > 0:
-            start = dt.datetime.now(dt.UTC) - dt.timedelta(days=self.warmup_days)
-            self.request_bars(state.bar_type, start=start, client_id=self.client_id)
+            start, end = warmup_window(self.clock.utc_now(), self.warmup_days)
+            self.request_bars(state.bar_type, start=start, end=end, client_id=self.client_id)
         self.subscribe_bars(state.bar_type, client_id=self.client_id)
 
     def on_historical_bars(self, bars: Any) -> None:

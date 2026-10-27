@@ -112,7 +112,7 @@ class RecorderSettings(_Model):
 class TelemetrySettings(_Model):
     enabled: bool = True
     service_name: str = "execsys"
-    otlp_endpoint: str = "http://localhost:4317"  # OTel Collector gRPC
+    otlp_endpoint: str = "http://127.0.0.1:4317"  # OTel Collector gRPC (IPv4: "localhost" may resolve to ::1)
     export_interval_ms: int = 5000
     console: bool = False  # print spans/metrics to stdout instead (debugging)
 

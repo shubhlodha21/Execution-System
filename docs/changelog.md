@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-10-27: fixes from first EC2 run
+
+- Strategy warm-up now requests an exact whole-day window with an explicit end (`warmup_window`). Before, the IB
+  adapter added a 1-second segment that IB rejected with error 321 ("duration is invalid"); the bars from the
+  main segment were still delivered.
+- Telemetry: if the OTel collector is unreachable at startup, export is disabled for the run with one warning
+  instead of repeated export errors. Default endpoint is now `http://127.0.0.1:4317` (avoids IPv6 `::1`).
+
 ## 2026-10-27: published to GitHub
 
 - Pushed to https://github.com/shubhlodha21/Execution-System (public). `Diagrams/`, `logs/`, `runtime/`, `data/`

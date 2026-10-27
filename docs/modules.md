@@ -32,6 +32,8 @@ are configured in `execsys/app.py` and described in `Diagrams/System_V2_Architec
 - **Job:** market data in → `Signal` out. One class per strategy, configured per entry in `strategies:`.
 - **Base:** `SignalStrategy(DataActor)` gives `emit()` (dedupes repeated directions, records metrics,
   publishes on `app.signal.<id>`), `guard()` (per-ticker exception isolation), `load_instruments()`.
+- **Warm-up:** use `warmup_window(now, days)` and pass both `start` and `end` to `request_bars`; with no end the IB
+  adapter adds a 1-second segment that IB rejects (error 321).
 - **Included:** `EmaCrossSignal`: EMA fast/slow crossover on IB 1-minute bars, warm-up from history,
   signals only from live bars, per-ticker duplicate-bar guard.
 - **Must not:** place orders (it has no order API), size positions, do I/O, call other strategies.
@@ -103,7 +105,8 @@ are configured in `execsys/app.py` and described in `Diagrams/System_V2_Architec
 
 - **Job:** configure OTel tracer/meter/logger providers with OTLP gRPC exporters (or console), JSON
   Python logs in `logs/execsys.jsonl`. Provides `get_metrics()` and `get_order_tracer()`.
-- **No-op until configured**, so tests and tools run without a collector.
+- **No-op until configured**, so tests and tools run without a collector. If the collector is unreachable at
+  startup, export is disabled for the run with one warning (`collector_reachable`).
 - Details: [observability.md](observability.md).
 
 ## 11. Monitoring + Alerting: `execsys/alerting/`

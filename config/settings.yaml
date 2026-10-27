@@ -73,7 +73,7 @@ recorder:
 telemetry:
   enabled: true
   service_name: execsys
-  otlp_endpoint: http://localhost:4317
+  otlp_endpoint: http://127.0.0.1:4317
   export_interval_ms: 5000
   console: false
 
