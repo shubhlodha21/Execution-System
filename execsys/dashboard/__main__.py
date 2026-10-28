@@ -129,8 +129,7 @@ def main() -> None:
                     refresh()
                 cols, rows = shutil.get_terminal_size((160, 50))
                 lines = [clip(line, cols) for line in screen().splitlines()][:rows]
-                sys.stdout.write(_HOME_CLEAR + "
-".join(lines))
+                sys.stdout.write(_HOME_CLEAR + "\n".join(lines))
                 sys.stdout.flush()
                 key = keys.get(args.refresh)
                 if key is None:

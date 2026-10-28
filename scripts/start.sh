@@ -82,7 +82,9 @@ tmux new-session -d -s "$SESSION" -n app "$ACTIVATE && RUN_MODE=$MODE python run
 tmux set-option -t "$SESSION" status off          # no tmux bar: the dashboard is the only thing on screen
 tmux set-option -t "$SESSION" remain-on-exit off
 sleep 3  # give the app a moment to write its first snapshot
-tmux new-window -t "$SESSION" -n dashboard "$ACTIVATE && python -m execsys.dashboard"
+# Keep the dashboard on screen: after a crash show the error and restart; after q wait for Enter
+DASH_LOOP='while true; do python -m execsys.dashboard; code=$?; if [ $code -eq 0 ]; then read -r -p "Dashboard closed. Press Enter to reopen ... "; else echo; echo "Dashboard stopped with an error (code $code). Restarting in 5 s ..."; sleep 5; fi; done'
+tmux new-window -t "$SESSION" -n dashboard "$ACTIVATE && $DASH_LOOP"
 tmux select-window -t "$SESSION:dashboard"
 
 if [[ -t 1 ]]; then

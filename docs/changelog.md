@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-10-28: dashboard fix
+
+- Fixed a syntax error in `execsys/dashboard/__main__.py` (introduced with line clipping) that made the dashboard
+  exit at once, so `scripts/start.sh` showed only the strategies' log window.
+- `scripts/start.sh` keeps the dashboard window alive: after an error it shows it and restarts in 5 s; after `q` it
+  waits for Enter and reopens.
+- New `tests/test_entry_points.py` starts every command-line program for real (including the dashboard loop).
+
 ## 2026-10-28: all run settings in .env
 
 - `.env` holds every run setting: `IB_ACCOUNT_ID`, `RUN_MODE` (paper / data-only), `IB_HOST`, `IB_PORT`, `IB_CLIENT_ID`,
