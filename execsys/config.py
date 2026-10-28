@@ -186,9 +186,11 @@ _ENV_OVERRIDES: dict[str, tuple[str, str]] = {
     "IB_HOST": ("ib", "host"),
     "IB_PORT": ("ib", "port"),
     "IB_CLIENT_ID": ("ib", "client_id"),
+    "IB_MARKET_DATA_TYPE": ("ib", "market_data_type"),
     "TELEGRAM_BOT_TOKEN": ("alerts", "telegram_bot_token"),
     "TELEGRAM_CHAT_ID": ("alerts", "telegram_chat_id"),
     "OTEL_EXPORTER_OTLP_ENDPOINT": ("telemetry", "otlp_endpoint"),
+    "TELEMETRY_ENABLED": ("telemetry", "enabled"),
 }
 
 

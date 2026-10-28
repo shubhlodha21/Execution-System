@@ -7,10 +7,15 @@ Unknown keys are rejected. Decimals are written as strings (`"1000"`).
 
 | Variable | Setting |
 |---|---|
-| `IB_ACCOUNT_ID` | `ib.account_id` (required unless `--data-only`) |
+| `IB_ACCOUNT_ID` | `ib.account_id` (required unless data-only) |
 | `IB_HOST`, `IB_PORT`, `IB_CLIENT_ID` | `ib.host`, `ib.port`, `ib.client_id` |
+| `IB_MARKET_DATA_TYPE` | `ib.market_data_type` |
+| `RUN_MODE` | `paper` (signals + orders) or `data-only`; read by `scripts/start.sh` and `run.py` |
 | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | `alerts.telegram_*` |
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | `telemetry.otlp_endpoint` |
+| `TELEMETRY_ENABLED`, `OTEL_EXPORTER_OTLP_ENDPOINT` | `telemetry.enabled`, `telemetry.otlp_endpoint` |
+
+All of these normally live in `.env` (template: `.env.example`). `scripts/start.sh` creates `.env` on first run and
+asks for the account ID; `run.py` reads `.env` itself (inline `# comments` allowed).
 
 ## Sections
 

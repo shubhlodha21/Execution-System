@@ -17,7 +17,13 @@ python -m venv /c/Users/shubham/.venvs/execution_system
   **Read-Only API off** for trading.
 - Without market data subscriptions on the paper account, set `ib.market_data_type: delayed-frozen`.
 
-## 3. Secrets
+## 3. Run settings (`.env`)
+
+Every run setting lives in `.env`: account, IB host/port/client ID, market-data type, `RUN_MODE`
+(`paper` / `data-only`), alerts, telemetry. `scripts/start.sh` creates it from `.env.example` on the first run and asks
+for your account ID. To change a setting, edit `.env` and run `scripts/start.sh` again.
+
+### Secrets
 
 Copy `.env.example` to `.env` (git-ignored) and set at least `IB_ACCOUNT_ID` (the `DU...` paper account).
 Load them into your shell before running, e.g. in PowerShell:

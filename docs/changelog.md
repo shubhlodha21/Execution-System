@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-28: all run settings in .env
+
+- `.env` holds every run setting: `IB_ACCOUNT_ID`, `RUN_MODE` (paper / data-only), `IB_HOST`, `IB_PORT`, `IB_CLIENT_ID`,
+  new `IB_MARKET_DATA_TYPE` and `TELEMETRY_ENABLED`, alerts. `.env.example` documents them (client ID 99).
+- `scripts/start.sh` creates `.env` on first run, asks for the account ID once and saves it; mode comes from
+  `RUN_MODE` (an argument still overrides). `run.py` honours `RUN_MODE` and inline comments in `.env`.
+
 ## 2026-10-27: no tmux kill
 
 - `scripts/stop.sh` never kills tmux: it sends Ctrl+C and Enter, waits, and lets the session close by itself;
