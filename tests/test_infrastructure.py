@@ -20,10 +20,10 @@ from execsys.strategies.ema_cross import crossover
 def test_repo_settings_load():
     s = load_settings("config/settings.yaml", env={"IB_ACCOUNT_ID": "DU1"})
     assert s.ib.account_id == "DU1"
-    assert s.universe == ["AAPL.XNAS", "MSFT.XNAS", "TSLA.XNAS", "EUR/USD.IDEALPRO", "USD/JPY.IDEALPRO"]
+    assert s.universe == ["ADI.XNAS", "MSFT.XNAS"]
+    assert [x.strategy_id for x in s.enabled_strategies] == ["EMA-CROSS-001", "RSI-EQ-001"]
     assert s.max_position("EUR/USD.IDEALPRO") == D(40000)
-    assert s.max_position("TSLA.XNAS") == D(50)
-    assert s.max_position("AAPL.XNAS") == D(100)
+    assert s.max_position("ADI.XNAS") == D(100)
 
 
 def test_settings_reject_bad_client_id(tmp_path):

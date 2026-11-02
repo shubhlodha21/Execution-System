@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-02: ADI + MSFT, trade journal
+
+- Strategies trade **ADI.XNAS and MSFT.XNAS** only (EMA-CROSS-001, RSI-EQ-001); RSI-FX-001 disabled.
+- New trade journal: `data/pnl/<date>/<TICKER>.csv` (one row per IB execution with commission, position, average
+  cost, realised P&L) and `summary.csv` (day totals per ticker). Order Manager publishes `TradeFill` on `app.fill`;
+  new `journal:` settings. Positions seeded from IB at startup.
+
 ## 2026-10-28: dashboard fix
 
 - Fixed a syntax error in `execsys/dashboard/__main__.py` (introduced with line clipping) that made the dashboard

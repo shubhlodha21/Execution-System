@@ -126,6 +126,12 @@ class AlertSettings(_Model):
     telegram_chat_id: str | None = None  # from env TELEGRAM_CHAT_ID
 
 
+class JournalSettings(_Model):
+    enabled: bool = True  # TradeJournal: data/pnl/<date>/<TICKER>.csv + summary.csv from IB executions
+    directory: str = "data/pnl"
+    state_file: str = "runtime/journal_state.json"
+
+
 class DashboardSettings(_Model):
     enabled: bool = True  # StatusPublisher writes a snapshot for `python -m execsys.dashboard`
     status_file: str = "runtime/status.json"
@@ -149,6 +155,7 @@ class Settings(_Model):
     alerts: AlertSettings = AlertSettings()
     ops: OpsSettings = OpsSettings()
     dashboard: DashboardSettings = DashboardSettings()
+    journal: JournalSettings = JournalSettings()
 
     @model_validator(mode="after")
     def _unique_ids(self) -> Settings:

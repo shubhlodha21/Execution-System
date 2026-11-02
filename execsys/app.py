@@ -124,6 +124,7 @@ def add_components(node: LiveNode, settings: Settings, data_only: bool = False) 
     from execsys.alerting.monitor import MonitoringActor
     from execsys.dashboard.publisher import StatusPublisher
     from execsys.dashboard.publisher import StatusPublisherConfig
+    from execsys.journal.journal import TradeJournal
     from execsys.order_manager.manager import OrderManager
     from execsys.persistence.recorder import DataRecorder
     from execsys.risk.monitor import RiskMonitor
@@ -137,6 +138,8 @@ def add_components(node: LiveNode, settings: Settings, data_only: bool = False) 
         # Risk Monitor before Order Manager so its state is known when signals start flowing
         node.add_strategy(RiskMonitor(settings))
         node.add_strategy(OrderManager(settings))
+        if settings.journal.enabled:
+            node.add_actor(TradeJournal(settings))
     if settings.dashboard.enabled:
         node.add_strategy(StatusPublisher(StatusPublisherConfig(settings, data_only)))
 

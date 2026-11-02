@@ -22,6 +22,7 @@ from nautilus_trader.trading import StrategyConfig
 from execsys.config import OrderManagerSettings
 from execsys.config import Settings
 from execsys.contracts import TOPIC_ALERT
+from execsys.contracts import TOPIC_FILL
 from execsys.contracts import TOPIC_ORDER_ISSUE
 from execsys.contracts import TOPIC_RISK_STATE
 from execsys.contracts import TOPIC_SIGNAL_ALL
@@ -30,6 +31,7 @@ from execsys.contracts import OrderIssue
 from execsys.contracts import RiskState
 from execsys.contracts import RiskStateChanged
 from execsys.contracts import Severity
+from execsys.contracts import TradeFill
 from execsys.contracts import Signal
 from execsys.order_manager.book import ZERO
 from execsys.order_manager.book import SignalBook
@@ -259,12 +261,34 @@ class OrderManager(Strategy):
         self._metrics.fills.add(1, {"instrument_id": iid})
         self._tracer.event(coid, "fill", {"qty": str(qty), "px": str(px)})
         self.log.info(f"FILL {iid} {qty}@{px} allocation={ {k: str(v) for k, v in allocation.items()} }")
+        self._publish_fill(event, multiplier, allocation)
 
         order = self.cache.order(event.client_order_id)
         if order is None or order.is_closed:
             self._finish(coid, "filled")
         self._save()
         self._rebalance(iid)
+
+    def _publish_fill(self, event: Any, multiplier: Decimal, allocation: dict[str, Decimal]) -> None:
+        commission = event.commission
+        self.publish_message(
+            TOPIC_FILL,
+            TradeFill(
+                ts_event=event.ts_event,
+                instrument_id=str(event.instrument_id),
+                side="BUY" if event.is_buy else "SELL",
+                quantity=str(event.last_qty),
+                price=str(event.last_px),
+                commission="0" if commission is None else str(commission.as_decimal()),
+                commission_currency="" if commission is None else str(commission.currency),
+                currency=str(event.currency),
+                multiplier=str(multiplier),
+                trade_id=str(event.trade_id),
+                venue_order_id=str(event.venue_order_id),
+                client_order_id=str(event.client_order_id),
+                allocation=tuple((sid, str(q)) for sid, q in allocation.items()),
+            ),
+        )
 
     def on_order_canceled(self, event: Any) -> None:
         self._finish(str(event.client_order_id), "canceled")

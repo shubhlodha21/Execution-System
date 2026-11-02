@@ -28,6 +28,7 @@ from nautilus_trader.model import Venue
 
 from execsys.alerting.monitor import MonitoringActor
 from execsys.app import build_strategy
+from execsys.journal.journal import TradeJournal
 from execsys.config import Settings
 from execsys.contracts import RiskState
 from execsys.ops.__main__ import write_command
@@ -68,6 +69,7 @@ def make_settings(tmp_path, strategy: dict = EMA_STRATEGY) -> Settings:
             "alerts": {"enabled": False},
             "ops": {"control_file": str(tmp_path / "control.json"), "risk_state_file": str(tmp_path / "risk.json")},
             "dashboard": {"status_file": str(tmp_path / "status.json")},
+            "journal": {"directory": str(tmp_path / "pnl"), "state_file": str(tmp_path / "journal.json")},
         },
     )
 
@@ -131,6 +133,7 @@ def build_engine(settings: Settings):
     for component in (strategy, om, recorder):
         component.client_id = None  # route to the simulated venue instead of IB
     engine.add_actor(MonitoringActor(settings))
+    engine.add_actor(TradeJournal(settings))
     engine.add_actor(recorder)
     engine.add_actor(strategy)
     engine.add_strategy(risk)
@@ -154,6 +157,20 @@ def test_signal_to_fill_flow(tmp_path):
         assert set(virtual) == {"EMA-CROSS-001"}
         assert virtual["EMA-CROSS-001"].quantity == net
         assert risk.state is RiskState.ACTIVE
+
+        # Trade journal: one row per IB fill in data/pnl/<date>/AAPL.csv, P&L matching the Order Manager
+        import csv
+
+        day_dirs = list((tmp_path / "pnl").iterdir())
+        assert len(day_dirs) == 1
+        rows = list(csv.DictReader((day_dirs[0] / "AAPL.csv").open()))
+        assert len(rows) == len(fills)
+        summary = list(csv.DictReader((day_dirs[0] / "summary.csv").open()))
+        assert summary[0]["ticker"] == IID and int(summary[0]["trades"]) == len(fills)
+        assert D(summary[0]["end_position"]) == net
+        virtual_realized = om.virtual.positions(IID)["EMA-CROSS-001"].realized_pnl
+        assert D(summary[0]["realized_gross"]) == virtual_realized.quantize(D("0.01"))
+        assert rows[-1]["day_realized_net"] == summary[0]["realized_net"]
 
         # Recorder wrote the bars through its background writer
         bars_csv = list((tmp_path / "rec").rglob("bar.csv"))

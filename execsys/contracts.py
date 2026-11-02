@@ -18,6 +18,7 @@ TOPIC_SIGNAL_ALL = "app.signal.*"
 TOPIC_RISK_STATE = "app.risk.state"
 TOPIC_ALERT = "app.alert"
 TOPIC_ORDER_ISSUE = "app.order.issue"
+TOPIC_FILL = "app.fill"
 
 
 def signal_topic(strategy_id: str) -> str:
@@ -71,6 +72,28 @@ class OrderIssue:
     instrument_id: str
     reason: str
     ts: int
+
+
+@dataclass(frozen=True, slots=True)
+class TradeFill:
+    """
+    One execution as reported by IB, published by the Order Manager for the trade journal.
+    Prices, quantities and commission are IB's values as decimal strings.
+    """
+
+    ts_event: int  # ns, IB execution time
+    instrument_id: str
+    side: str  # "BUY" | "SELL"
+    quantity: str  # positive
+    price: str
+    commission: str  # IB commission report (positive = cost)
+    commission_currency: str
+    currency: str  # instrument quote currency
+    multiplier: str
+    trade_id: str  # IB execution id
+    venue_order_id: str  # IB order id
+    client_order_id: str
+    allocation: tuple[tuple[str, str], ...]  # (strategy_id, signed qty) from the Order Manager
 
 
 class Severity(enum.StrEnum):

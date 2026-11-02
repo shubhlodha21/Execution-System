@@ -159,3 +159,18 @@ are configured in `execsys/app.py` and described in `Diagrams/System_V2_Architec
   each move), human-readable timeframes and ages. `python -m execsys.dashboard` redraws the screen every second from the
   snapshot plus the Order Manager state (per-strategy virtual position and realised PnL). Opens no IB connection and
   needs no client_id. Shows RUNNING / NOT RESPONDING (snapshot older than 5 s) / STOPPED. `render()` is pure and tested.
+
+## 15. Trade journal (`execsys/journal/`)
+
+- **Job:** day- and ticker-wise P&L files from IB executions:
+  - `data/pnl/<YYYY-MM-DD>/<TICKER>.csv`: one row per IB execution: UTC and IST time, side, quantity, price,
+    IB commission, position and average cost after the fill, realised P&L (gross, net of commission), running day
+    P&L, strategy allocation, IB execution id, IB order id, client order id.
+  - `data/pnl/<YYYY-MM-DD>/summary.csv`: per ticker for the day: trades, bought/sold qty, average buy/sell price,
+    realised gross, commission, realised net, end position, end average cost. Rewritten after every fill.
+- **Input:** `TradeFill` on `app.fill`, published by the Order Manager from each Nautilus `OrderFilled` (IB's
+  execution id, price, quantity, IB commission report).
+- **Accounting:** pure `ledger.py`, average cost per ticker; positions carry across days, daily figures start at 0
+  (UTC days). At startup positions are seeded from the IB-reconciled cache (IB quantity and average cost); state in
+  `journal.state_file`. Commission in another currency than the instrument is recorded but not subtracted.
+- **Runs** only with an execution client (not in data-only mode). File I/O on its own writer thread.

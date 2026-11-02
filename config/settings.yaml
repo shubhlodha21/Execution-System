@@ -21,16 +21,14 @@ risk_engine:              # Nautilus pre-trade checks (every order)
   max_order_submit_rate: "40/00:00:01"
   max_order_modify_rate: "40/00:00:01"
   max_notional_per_order:
-    AAPL.XNAS: "50000"
+    ADI.XNAS: "50000"
     MSFT.XNAS: "50000"
-    TSLA.XNAS: "50000"
 
 risk_limits:              # Risk Monitor (account level)
   base_currency: USD      # PnL/exposure of every instrument converted to this (USD/JPY PnL is in JPY)
   max_daily_loss: "1000"
   default_max_position: "100"
   max_position_per_instrument:
-    TSLA.XNAS: "50"
     EUR/USD.IDEALPRO: "40000"   # FX sizes are in base-currency units
     USD/JPY.IDEALPRO: "40000"
   max_gross_exposure: "250000"
@@ -54,7 +52,7 @@ strategies:
   - strategy_id: EMA-CROSS-001
     class_path: execsys.strategies.ema_cross:EmaCrossSignal
     enabled: true
-    instruments: [AAPL.XNAS, MSFT.XNAS, TSLA.XNAS]
+    instruments: [ADI.XNAS, MSFT.XNAS]
     size: "10"
     params:
       bar_spec: 1-MINUTE-LAST-EXTERNAL
@@ -62,9 +60,9 @@ strategies:
       slow_period: 30
       warmup_days: 3
 
-  - strategy_id: RSI-FX-001         # RSI overbought/oversold on forex
+  - strategy_id: RSI-FX-001         # RSI overbought/oversold on forex (off: equities ADI + MSFT only)
     class_path: execsys.strategies.rsi:RsiSignal
-    enabled: true
+    enabled: false
     instruments: [EUR/USD.IDEALPRO, USD/JPY.IDEALPRO]
     size: "20000"                   # units of the base currency (IDEALPRO minimum is 20,000)
     params:
@@ -78,7 +76,7 @@ strategies:
   - strategy_id: RSI-EQ-001         # RSI overbought/oversold on equities
     class_path: execsys.strategies.rsi:RsiSignal
     enabled: true
-    instruments: [AAPL.XNAS, MSFT.XNAS]
+    instruments: [ADI.XNAS, MSFT.XNAS]
     size: "10"
     params:
       bar_spec: 5-MINUTE-LAST-EXTERNAL
@@ -110,6 +108,11 @@ alerts:
   enabled: true
   dedupe_secs: 300
   max_per_minute: 20
+
+journal:                  # day + ticker wise P&L from IB executions
+  enabled: true
+  directory: data/pnl     # data/pnl/<date>/<TICKER>.csv and summary.csv
+  state_file: runtime/journal_state.json
 
 dashboard:                # terminal dashboard: python -m execsys.dashboard
   enabled: true

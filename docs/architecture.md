@@ -54,6 +54,7 @@ in-process **message bus**, so a message between modules is a function call, not
 | `app.risk.state` | `RiskStateChanged(state, reasons, flatten, ts)` | Risk Monitor | Order Manager (priority 10) |
 | `app.order.issue` | `OrderIssue(kind, instrument_id, reason, ts)` | Order Manager | Risk Monitor |
 | `app.alert` | `Alert(severity, module, message, ts)` | any | Monitoring actor |
+| `app.fill` | `TradeFill(ts, instrument, side, qty, price, IB commission, IB execution/order ids, allocation)` | Order Manager | Trade journal |
 
 A signal is a **target direction**, not an order: the Order Manager multiplies it by the strategy's
 configured `size`. Sending the same signal twice therefore never creates a second order.

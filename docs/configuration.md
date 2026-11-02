@@ -76,6 +76,13 @@ asks for the account ID; `run.py` reads `.env` itself (inline `# comments` allow
 **`RsiSignal` params:** `bar_spec`, `period` (14), `overbought` (70), `oversold` (30), `exit_level` (50, or `null`),
 `warmup_days` (3). **`EmaCrossSignal` params:** `bar_spec`, `fast_period` (10), `slow_period` (30), `warmup_days` (3).
 
+### `journal`
+| Key | Default | Meaning |
+|---|---|---|
+| `enabled` | `true` | register the trade journal (trading mode only) |
+| `directory` | `data/pnl` | `data/pnl/<date>/<TICKER>.csv` and `summary.csv` |
+| `state_file` | `runtime/journal_state.json` | positions, average cost and today's totals across restarts |
+
 ### `dashboard`
 | Key | Default | Meaning |
 |---|---|---|

@@ -127,6 +127,7 @@ engine: bars → strategy → Order Manager → simulated venue fills, plus the 
 | `logs/nautilus_*.json*` | Nautilus component logs (JSON) |
 | `logs/execsys.jsonl` | Python-side logs (alerts, writers, telemetry) |
 | `data/recorded/<date>/tick.csv`, `bar.csv` | recorded market data |
+| `data/pnl/<date>/<TICKER>.csv`, `summary.csv` | trade journal: every IB fill and day P&L per ticker |
 | `runtime/order_manager_state.json` | signal targets + per-strategy virtual positions |
 | `runtime/risk_state.json` | daily PnL baseline, latched halt, manual state |
 | `runtime/control.json` | last operator command |

@@ -56,3 +56,12 @@ Newest last. Each entry: context → decision → consequences.
 - **Context:** adding FX (USD/JPY PnL is in JPY) would have summed yen and dollars in daily loss and exposure.
 - **Decision:** Risk Monitor converts each instrument's PnL/exposure with `target_currency=risk_limits.base_currency`;
   unconvertible values are excluded with a one-time warning. Recorder uses MID bars and no trades for FX.
+
+## D-011 · Trade P&L from IB executions, average cost
+- **Context:** day/ticker P&L should come from IBKR. The Nautilus v2 IB adapter passes each execution (IB execution id,
+  price, quantity) and IB's commission report through to `OrderFilled`, but IB's own P&L feed (`reqPnL`) is only
+  logged at debug level and per-ticker `reqPnLSingle` is not exposed.
+- **Decision:** the trade journal computes realised P&L with average cost from IB's executions and commissions and
+  seeds open positions from IB's reconciled quantity and average cost at startup.
+- **Consequences:** figures use IB's data but are computed by us; IB may differ slightly when it uses FIFO tax lots.
+  Fetching IB's own per-ticker P&L would need a second IB connection (own client_id) using the IB API directly.
