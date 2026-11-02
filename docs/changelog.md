@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-11-02: start.sh inside tmux
+
+- When run from inside an existing tmux session, `scripts/start.sh` switches to the `execsys` session instead of
+  failing with "sessions should be nested with care".
+
 ## 2026-11-02: LLY and SPCX
 
 - Added **LLY.XNYS** (Eli Lilly, NYSE) and **SPCX.XNAS** (SpaceX, Nasdaq) to EMA-CROSS-001 and RSI-EQ-001, with

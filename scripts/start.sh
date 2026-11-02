@@ -87,7 +87,10 @@ DASH_LOOP='while true; do python -m execsys.dashboard; code=$?; if [ $code -eq 0
 tmux new-window -t "$SESSION" -n dashboard "$ACTIVATE && $DASH_LOOP"
 tmux select-window -t "$SESSION:dashboard"
 
-if [[ -t 1 ]]; then
+if [[ -n "${TMUX:-}" ]]; then
+  # Already inside tmux: switch this client to the bot's session instead of nesting
+  exec tmux switch-client -t "$SESSION"
+elif [[ -t 1 ]]; then
   exec tmux attach -t "$SESSION"
 else
   echo "Running in tmux session '$SESSION' (attach with: tmux attach -t $SESSION)"
