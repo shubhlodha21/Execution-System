@@ -23,6 +23,8 @@ risk_engine:              # Nautilus pre-trade checks (every order)
   max_notional_per_order:
     ADI.XNAS: "50000"
     MSFT.XNAS: "50000"
+    LLY.XNYS: "50000"     # Eli Lilly, NYSE
+    SPCX.XNAS: "50000"    # SpaceX, Nasdaq (IPO June 2026)
 
 risk_limits:              # Risk Monitor (account level)
   base_currency: USD      # PnL/exposure of every instrument converted to this (USD/JPY PnL is in JPY)
@@ -52,7 +54,7 @@ strategies:
   - strategy_id: EMA-CROSS-001
     class_path: execsys.strategies.ema_cross:EmaCrossSignal
     enabled: true
-    instruments: [ADI.XNAS, MSFT.XNAS]
+    instruments: [ADI.XNAS, MSFT.XNAS, LLY.XNYS, SPCX.XNAS]
     size: "10"
     params:
       bar_spec: 1-MINUTE-LAST-EXTERNAL
@@ -76,7 +78,7 @@ strategies:
   - strategy_id: RSI-EQ-001         # RSI overbought/oversold on equities
     class_path: execsys.strategies.rsi:RsiSignal
     enabled: true
-    instruments: [ADI.XNAS, MSFT.XNAS]
+    instruments: [ADI.XNAS, MSFT.XNAS, LLY.XNYS, SPCX.XNAS]
     size: "10"
     params:
       bar_spec: 5-MINUTE-LAST-EXTERNAL

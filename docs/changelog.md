@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-11-02: LLY and SPCX
+
+- Added **LLY.XNYS** (Eli Lilly, NYSE) and **SPCX.XNAS** (SpaceX, Nasdaq) to EMA-CROSS-001 and RSI-EQ-001, with
+  50,000 max notional per order. Strategies now trade ADI, MSFT, LLY, SPCX.
+
 ## 2026-11-02: ADI + MSFT, trade journal
 
 - Strategies trade **ADI.XNAS and MSFT.XNAS** only (EMA-CROSS-001, RSI-EQ-001); RSI-FX-001 disabled.
